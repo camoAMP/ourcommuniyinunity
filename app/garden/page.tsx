@@ -88,9 +88,18 @@ export default function GardenPage() {
               </div>
             </div>
             <div className="relative">
-              <div className="aspect-square overflow-hidden rounded-2xl bg-primary-foreground/10">
-                <div className="flex h-full items-center justify-center">
-                  <Flower2 className="h-32 w-32 text-secondary" />
+              <div className="overflow-hidden rounded-2xl bg-primary-foreground/10">
+                <div className="aspect-[2/1] w-full">
+                  <iframe
+                    src="https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2FCamoflage021%2Fposts%2Fpfbid034JVbBFcbBNcK3fhFkGsWymthBdwMr74PzGecr2TQX7pNtH6qADiRWchtjmzN1CYkl&show_text=true&width=500"
+                    className="h-full w-full"
+                    style={{ border: "none", overflow: "hidden" }}
+                    scrolling="no"
+                    frameBorder="0"
+                    allowFullScreen
+                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                    title="Garden Update - Facebook Post"
+                  />
                 </div>
               </div>
             </div>
