@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_ZA",
-    url: "https://ourcommunityinunity.org",
+    url: "https://cptcommunityadults.fun",
     siteName: "Our Community In Unity",
     title: "Our Community In Unity | Empower Through Collective Knowledge",
     description:
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     icon: "/favicon.png",
     apple: "/favicon.png",
   },
-  metadataBase: new URL("https://ourcommunityinunity.org"),
+  metadataBase: new URL("https://cptcommunityadults.fun"),
     generator: 'v0.app'
 };
 

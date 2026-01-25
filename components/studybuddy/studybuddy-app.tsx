@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useEffect, useRef, useState, useContext } from "react";
+import React, { createContext, useEffect, useRef, useState } from "react";
 import {
   Layout,
   Brain,
@@ -69,9 +69,12 @@ const StudyBuddyApp = () => {
   const [autoSpeak, setAutoSpeak] = useState(true);
   const [conversation, setConversation] = useState<Array<any>>([]);
   const [speechSupported, setSpeechSupported] = useState(false);
+  const [speechOutputSupported, setSpeechOutputSupported] = useState(true);
+  const [isSecureContext, setIsSecureContext] = useState(true);
   const [mobileConnectionStatus, setMobileConnectionStatus] = useState("disconnected");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const modelWorkerRef = useRef<Worker | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   // Theme management
   useEffect(() => {
@@ -124,9 +127,13 @@ const StudyBuddyApp = () => {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
+    const secure =
+      typeof window.isSecureContext === "boolean" ? window.isSecureContext : true;
+    setIsSecureContext(secure);
     const supportsSpeech =
-      "webkitSpeechRecognition" in window || "SpeechRecognition" in window;
+      secure && ("webkitSpeechRecognition" in window || "SpeechRecognition" in window);
     setSpeechSupported(supportsSpeech);
+    setSpeechOutputSupported("speechSynthesis" in window);
 
     if (supportsSpeech) {
       const SpeechRecognition =
@@ -165,6 +172,12 @@ const StudyBuddyApp = () => {
 
     return undefined;
   }, []);
+
+  useEffect(() => {
+    if (!speechOutputSupported && autoSpeak) {
+      setAutoSpeak(false);
+    }
+  }, [speechOutputSupported, autoSpeak]);
 
   // Energy points management
   useEffect(() => {
@@ -214,6 +227,9 @@ const StudyBuddyApp = () => {
     setOfflineModelStatus("loading");
 
     try {
+      if (typeof Worker === "undefined" || typeof URL === "undefined") {
+        throw new Error("Web Worker not supported");
+      }
       if (!modelWorkerRef.current) {
         modelWorkerRef.current = new Worker(
           URL.createObjectURL(
@@ -275,7 +291,7 @@ const StudyBuddyApp = () => {
         {
           role: "assistant",
           content:
-            "Failed to load offline model. Please check your internet connection and try again. Falling back to online mode.",
+            "Offline mode isn't supported in this browser, so I'll keep using the online model.",
           name: "System",
         },
       ]);
@@ -346,12 +362,10 @@ const StudyBuddyApp = () => {
         }
       }
 
-      const scaffoldedMessage = applyScaffolding(message, gradeLevel);
-
       if (activeModel === "offline" && offlineModelStatus === "loaded") {
-        await handleOfflineModelMessage(scaffoldedMessage);
+        await handleOfflineModelMessage(message);
       } else {
-        await handleOnlineModelMessage(scaffoldedMessage);
+        await handleOnlineModelMessage(message);
       }
     } catch (error) {
       console.error("Error processing message:", error);
@@ -365,39 +379,6 @@ const StudyBuddyApp = () => {
         },
       ]);
     }
-  };
-
-  // Apply pedagogical scaffolding based on grade level
-  const applyScaffolding = (message: string, level: string) => {
-    const lowerMsg = message.toLowerCase();
-
-    if (level === "7-9") {
-      if (lowerMsg.includes("photosynthesis")) {
-        return "Like how a pizza gets made from ingredients, plants make their food from sunlight. Can you tell me what you already know about how plants eat?";
-      }
-      if (lowerMsg.includes("gravity")) {
-        return "Remember how when you drop your phone it falls down? That's gravity! It's like an invisible string pulling everything toward the Earth. What would happen if there was no gravity?";
-      }
-      if (lowerMsg.includes("cell") || lowerMsg.includes("biology")) {
-        return "Think of your body like a LEGO castle - it's made of millions of tiny building blocks called cells. Each cell has a special job, just like different LEGO pieces have different shapes. What part of your body are you curious about?";
-      }
-    } else if (level === "10-12") {
-      if (lowerMsg.includes("calculus") || lowerMsg.includes("derivative")) {
-        return "Imagine you're driving a car and watching the speedometer. The derivative is like how fast your speed is changing. This connects to real physics concepts like acceleration. Would you like me to show a visual graph?";
-      }
-      if (lowerMsg.includes("dna") || lowerMsg.includes("genetics")) {
-        return "Think of DNA like a recipe book for building a human. Each chapter (gene) has instructions for one part, like eye color or height. Mutations are like typos in the recipe. How does this connect to what you're studying?";
-      }
-    } else if (level === "university-prep") {
-      if (lowerMsg.includes("quantum") || lowerMsg.includes("physics")) {
-        return "At the university level, quantum mechanics challenges our everyday intuition. This connects to cutting-edge research in quantum computing. Let me explain both the foundational concepts and their modern applications.";
-      }
-      if (lowerMsg.includes("organic chemistry")) {
-        return "Organic chemistry at university builds on high school foundations but focuses on reaction mechanisms and synthesis strategies used in pharmaceutical research. Let me show you how this connects to real drug development.";
-      }
-    }
-
-    return message;
   };
 
   // Offline model message handling
@@ -449,45 +430,94 @@ const StudyBuddyApp = () => {
     setIsProcessing(false);
   };
 
+  const buildHistoryPayload = (items: Array<any>) =>
+    items
+      .filter(
+        (item) =>
+          (item.role === "user" || item.role === "assistant") &&
+          !item.isThinking &&
+          item.name !== "System"
+      )
+      .map((item) => ({
+        role: item.role,
+        content: typeof item.content === "string" ? item.content : String(item.content ?? ""),
+      }))
+      .filter((item) => item.content.trim().length > 0)
+      .slice(-8);
+
   // Online model message handling
   const handleOnlineModelMessage = async (message: string) => {
     setIsProcessing(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      const history = buildHistoryPayload([
+        ...conversation,
+        { role: "user", content: message },
+      ]);
+      const controller =
+        typeof AbortController !== "undefined" ? new AbortController() : null;
+      const timeout = controller
+        ? setTimeout(() => controller.abort(), 20000)
+        : null;
+      const response = await fetch("/api/studybuddy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message,
+          gradeLevel,
+          history,
+        }),
+        signal: controller?.signal,
+      });
+      if (timeout) clearTimeout(timeout);
 
-    setConversation((prev) => prev.filter((msg) => !msg.isThinking));
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data?.error || "StudyBuddy request failed.");
+      }
 
-    const lowerMsg = message.toLowerCase();
-    let response = "";
+      const text = typeof data?.text === "string" ? data.text.trim() : "";
+      if (!text) {
+        throw new Error("No response text returned.");
+      }
 
-    if (lowerMsg.includes("photosynthesis")) {
-      response = `Photosynthesis is how plants make their own food using sunlight! Here's the simple version:\n\n1. Sunlight hits the plant's leaves\n2. The plant takes in water from roots and carbon dioxide from air\n3. Using sunlight energy, it converts these into sugar (food) and oxygen\n4. The oxygen is released into the air for us to breathe!\n\nThink of it like a kitchen where sunlight is the stove, water and CO2 are the ingredients, and sugar is the meal!\n\nWould you like me to visualize this process with a diagram?`;
-    } else if (lowerMsg.includes("gravity")) {
-      response = `Gravity is the force that pulls everything toward each other! Here's how it works:\n\nEarth's gravity pulls you down toward its center\nThe bigger an object, the stronger its gravity (Earth has more gravity than the Moon)\nGravity keeps planets orbiting the Sun and moons orbiting planets\n\nFun fact: In video games like Minecraft, gravity makes sand and gravel fall when you remove blocks underneath them!\n\nWant to see a visual demonstration of how gravity works?`;
-    } else if (lowerMsg.includes("cell") || lowerMsg.includes("biology")) {
-      response = `Cells are the tiny building blocks of all living things! Imagine your body is like a city:\n\nNucleus = City Hall (controls everything)\nMitochondria = Power Plants (make energy)\nCell Membrane = City Walls (controls what enters/exits)\nCytoplasm = All the space between buildings (where work happens)\n\nJust like a city needs all its parts working together, your body needs millions of cells working together! What part of cells interests you most?`;
-    } else if (lowerMsg.includes("algebra") || lowerMsg.includes("math")) {
-      response = `Math is like a superpower for solving real-world problems! For example:\n\nIf you want to buy a $60 video game and you save $10 per week, how many weeks will it take?\nLet x = number of weeks\n10x = 60\nx = 6 weeks\n\nThis is algebra in action! It helps you plan, budget, and make smart decisions. Would you like me to show you more examples with visuals?`;
-    } else {
-      response = `Hello! I'm StudyBuddy, your free AI tutor. I can help you learn math, science, and biology concepts at your grade level. Just ask me anything like:\n\nExplain photosynthesis simply\nVisualize how gravity works\nHelp me with algebra homework\nWhat's a cell made of?\n\nWhat would you like to learn today?`;
+      setConversation((prev) => {
+        const withoutThinking = prev.filter((msg) => !msg.isThinking);
+        return [
+          ...withoutThinking,
+          {
+            role: "assistant",
+            content: text,
+            name: "StudyBuddy",
+            online: true,
+            gradeLevel: gradeLevel,
+          },
+        ];
+      });
+
+      if (autoSpeak) {
+        speakText(text);
+      }
+    } catch (error: any) {
+      console.error("StudyBuddy API error:", error);
+      setConversation((prev) => {
+        const withoutThinking = prev.filter((msg) => !msg.isThinking);
+        const errorMessage =
+          error?.name === "AbortError"
+            ? "The AI request took too long. Please try again."
+            : "I'm having trouble reaching the AI service right now. Please try again in a moment.";
+        return [
+          ...withoutThinking,
+          {
+            role: "assistant",
+            content: errorMessage,
+            error: true,
+          },
+        ];
+      });
+    } finally {
+      setIsProcessing(false);
     }
-
-    setConversation((prev) => [
-      ...prev,
-      {
-        role: "assistant",
-        content: response,
-        name: "StudyBuddy",
-        online: true,
-        gradeLevel: gradeLevel,
-      },
-    ]);
-
-    if (autoSpeak) {
-      speakText(response);
-    }
-
-    setIsProcessing(false);
   };
 
   // Text-to-speech function
@@ -905,11 +935,12 @@ const StudyBuddyApp = () => {
                       </div>
                       <button
                         onClick={() => setAutoSpeak(!autoSpeak)}
+                        disabled={!speechOutputSupported}
                         className={`flex items-center rounded-full px-3 py-1 text-sm font-medium ${
                           autoSpeak
                             ? "bg-primary/10 text-primary"
                             : "bg-muted text-muted-foreground"
-                        }`}
+                        } ${!speechOutputSupported ? "cursor-not-allowed opacity-60" : ""}`}
                       >
                         {autoSpeak ? <Volume2 size={16} /> : <VolumeX size={16} />}
                         <span className="ml-1">Auto-speak</span>
@@ -970,6 +1001,30 @@ const StudyBuddyApp = () => {
                       ))}
                     </div>
                   </div>
+
+                  {(!isSecureContext ||
+                    !speechSupported ||
+                    !speechOutputSupported) && (
+                    <div className="mb-6 rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 text-amber-200">
+                      <div className="flex items-start gap-3">
+                        <AlertTriangle size={18} className="mt-0.5 text-amber-200" />
+                        <div>
+                          <p className="font-medium">Browser compatibility notice</p>
+                          <div className="mt-1 space-y-1 text-sm text-amber-100/90">
+                            {!isSecureContext && (
+                              <p>Voice features require a secure (HTTPS) connection.</p>
+                            )}
+                            {!speechSupported && (
+                              <p>Voice input isn’t supported in this browser. Use text input instead.</p>
+                            )}
+                            {!speechOutputSupported && (
+                              <p>Text-to-speech isn’t available, so auto-speak is disabled.</p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   <div className="mb-6 h-[60vh] overflow-y-auto rounded-xl border border-border bg-card p-5">
                     {conversation.length === 0 ? (
@@ -1155,6 +1210,7 @@ const StudyBuddyApp = () => {
                       <Mic size={24} />
                     </button>
                     <input
+                      ref={inputRef}
                       type="text"
                       placeholder={`Ask StudyBuddy about ${
                         gradeLevel === "7-9"
@@ -1164,7 +1220,7 @@ const StudyBuddyApp = () => {
                           : "university prep"
                       } topics...`}
                       className="flex-1 rounded-lg border border-border bg-muted px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                      onKeyPress={(e) => {
+                      onKeyDown={(e) => {
                         if (e.key === "Enter") {
                           const value = e.currentTarget.value;
                           if (value) {
@@ -1176,12 +1232,9 @@ const StudyBuddyApp = () => {
                     />
                     <button
                       onClick={() => {
-                        const input = document.querySelector(
-                          'input[placeholder*="topics"]'
-                        ) as HTMLInputElement | null;
-                        if (input?.value) {
-                          handleUserMessage(input.value);
-                          input.value = "";
+                        if (inputRef.current?.value) {
+                          handleUserMessage(inputRef.current.value);
+                          inputRef.current.value = "";
                         }
                       }}
                       className="rounded-lg bg-gradient-to-r from-primary to-secondary px-6 py-3 font-medium text-white transition-all hover:from-primary hover:to-secondary"
@@ -1271,6 +1324,8 @@ const StudyBuddyApp = () => {
                             ? "border-green-500 bg-green-500/10"
                             : offlineModelStatus === "loading"
                             ? "border-amber-500 bg-amber-500/10"
+                            : offlineModelStatus === "error"
+                            ? "border-red-500/60 bg-red-500/10"
                             : "border-border bg-muted/60"
                         }`}
                       >
@@ -1294,6 +1349,11 @@ const StudyBuddyApp = () => {
                               </motion.div>
                             </div>
                           )}
+                          {offlineModelStatus === "error" && (
+                            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-500/20">
+                              <AlertTriangle className="text-red-300" size={32} />
+                            </div>
+                          )}
                           {offlineModelStatus === "not-loaded" && (
                             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
                               <Cpu className="text-muted-foreground" size={32} />
@@ -1304,6 +1364,8 @@ const StudyBuddyApp = () => {
                         <h3 className="mb-2 text-xl font-bold">
                           {offlineModelStatus === "loaded" && "Model Ready"}
                           {offlineModelStatus === "loading" && "Loading Model..."}
+                          {offlineModelStatus === "error" &&
+                            "Offline Mode Unavailable"}
                           {offlineModelStatus === "not-loaded" &&
                             "Load Offline Model"}
                         </h3>
@@ -1313,6 +1375,8 @@ const StudyBuddyApp = () => {
                             "Your local AI model is ready to use! No internet needed."}
                           {offlineModelStatus === "loading" &&
                             `Loading model... ${modelProgress}% complete`}
+                          {offlineModelStatus === "error" &&
+                            "This browser doesn't support the offline worker. Use the online mode for now."}
                           {offlineModelStatus === "not-loaded" &&
                             "Download and load the offline model to use StudyBuddy without internet."}
                         </p>
@@ -1433,13 +1497,20 @@ const StudyBuddyApp = () => {
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-foreground/80">Auto-speak responses</span>
-                          <label className="relative inline-flex cursor-pointer items-center">
+                          <label
+                            className={`relative inline-flex items-center ${
+                              !speechOutputSupported
+                                ? "cursor-not-allowed opacity-60"
+                                : "cursor-pointer"
+                            }`}
+                          >
                             <input
                               type="checkbox"
                               value=""
                               className="peer sr-only"
                               checked={autoSpeak}
                               onChange={(e) => setAutoSpeak(e.target.checked)}
+                              disabled={!speechOutputSupported}
                             />
                             <div className="peer h-6 w-11 rounded-full bg-muted after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-border after:bg-background after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-primary peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/30"></div>
                           </label>
