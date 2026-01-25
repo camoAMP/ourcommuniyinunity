@@ -7,9 +7,9 @@
     "dev": "next dev",
     "lint": "eslint .",
     "start": "next start",
-    "preview": "opennextjs-cloudflare && wrangler dev",
-    "deploy": "opennextjs-cloudflare && wrangler deploy",
-    "upload": "opennextjs-cloudflare && wrangler deploy --assets=./.open-next/assets",
+    "preview": "opennextjs-cloudflare build && wrangler dev",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
     "cf-typegen": "wrangler types"
   },
   "dependencies": {
