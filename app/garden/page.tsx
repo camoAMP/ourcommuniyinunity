@@ -7,10 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 import { Badge } from "@/components/ui/badge";
 import {
-  Flower2,
   Heart,
   Target,
-  Users,
   Leaf,
   Utensils,
   Trash2,
@@ -52,6 +50,111 @@ const gardenPurposes = [
     amount: "R30,000",
   },
 ];
+
+const gardenGallery = [
+  {
+    src: "/images/garden/bonteheuwel-community-garden-2026-01-08-01.jpg",
+    alt: "Community garden in Bonteheuwel, Cape Town — January 8, 2026",
+    width: 3264,
+    height: 2448,
+  },
+  {
+    src: "/images/garden/bonteheuwel-community-garden-2026-01-08-02.jpg",
+    alt: "Community garden in Bonteheuwel, Cape Town — January 8, 2026",
+    width: 3264,
+    height: 2448,
+  },
+  {
+    src: "/images/garden/bonteheuwel-community-garden-2026-01-08-03.jpg",
+    alt: "Community garden in Bonteheuwel, Cape Town — January 8, 2026",
+    width: 3264,
+    height: 2448,
+  },
+  {
+    src: "/images/garden/bonteheuwel-community-garden-2026-01-08-04.jpg",
+    alt: "Community garden in Bonteheuwel, Cape Town — January 8, 2026",
+    width: 3264,
+    height: 2448,
+  },
+  {
+    src: "/images/garden/bonteheuwel-community-garden-2026-01-08-05.jpg",
+    alt: "Community garden in Bonteheuwel, Cape Town — January 8, 2026",
+    width: 3264,
+    height: 2448,
+  },
+  {
+    src: "/images/garden/bonteheuwel-community-garden-2026-01-08-06.jpg",
+    alt: "Community garden in Bonteheuwel, Cape Town — January 8, 2026",
+    width: 3264,
+    height: 2448,
+  },
+  {
+    src: "/images/garden/bonteheuwel-community-garden-2026-01-08-07.jpg",
+    alt: "Community garden in Bonteheuwel, Cape Town — January 8, 2026",
+    width: 3264,
+    height: 2448,
+  },
+  {
+    src: "/images/garden/bonteheuwel-community-garden-2026-01-08-08.jpg",
+    alt: "Community garden in Bonteheuwel, Cape Town — January 8, 2026",
+    width: 3072,
+    height: 4080,
+  },
+  {
+    src: "/images/garden/bonteheuwel-community-garden-2026-01-08-09.jpg",
+    alt: "Community garden in Bonteheuwel, Cape Town — January 8, 2026",
+    width: 3072,
+    height: 4080,
+  },
+  {
+    src: "/images/garden/bonteheuwel-community-garden-2026-01-08-10.jpg",
+    alt: "Community garden in Bonteheuwel, Cape Town — January 8, 2026",
+    width: 4080,
+    height: 3072,
+  },
+  {
+    src: "/images/garden/bonteheuwel-community-garden-2026-01-08-11.jpg",
+    alt: "Community garden in Bonteheuwel, Cape Town — January 8, 2026",
+    width: 4080,
+    height: 3072,
+  },
+  {
+    src: "/images/garden/bonteheuwel-community-garden-2026-01-08-12.jpg",
+    alt: "Community garden in Bonteheuwel, Cape Town — January 8, 2026",
+    width: 4080,
+    height: 3072,
+  },
+  {
+    src: "/images/garden/bonteheuwel-community-garden-2026-01-16-01.jpg",
+    alt: "Community garden in Bonteheuwel, Cape Town — January 16, 2026",
+    width: 4080,
+    height: 3072,
+  },
+  {
+    src: "/images/garden/bonteheuwel-community-garden-2026-01-16-02.jpg",
+    alt: "Community garden in Bonteheuwel, Cape Town — January 16, 2026",
+    width: 4080,
+    height: 3072,
+  },
+  {
+    src: "/images/garden/bonteheuwel-community-garden-2026-01-16-03.jpg",
+    alt: "Community garden in Bonteheuwel, Cape Town — January 16, 2026",
+    width: 4080,
+    height: 3072,
+  },
+  {
+    src: "/images/garden/bonteheuwel-community-garden-2026-01-16-04.jpg",
+    alt: "Community garden in Bonteheuwel, Cape Town — January 16, 2026",
+    width: 4080,
+    height: 3072,
+  },
+];
+
+const gardenVideo = {
+  src: "/videos/bonteheuwel-community-garden-2026-01-08.mp4",
+  title: "Colleen Williams Memorial Garden video update",
+  caption: "A short look at the community garden in Bonteheuwel.",
+};
 
 const GOAL_AMOUNT = 100000;
 const CURRENT_AMOUNT = 0;
@@ -346,32 +449,34 @@ export default function GardenPage() {
         </div>
       </section>
 
-      {/* Video Section - Anti-Dumping */}
-      <section className="bg-background py-20">
+      {/* Garden Media Gallery */}
+      <section id="gallery" className="bg-background py-20">
         <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-4xl">
+          <div className="mx-auto max-w-5xl">
             <div className="mb-8 text-center">
               <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-secondary">
-                Watch Our Progress
+                Garden Gallery
               </p>
               <h2 className="mb-4 font-serif text-3xl font-bold text-foreground md:text-4xl">
-                Anti-Dumping Clean-Up Campaign
+                Garden Media Updates
               </h2>
               <p className="text-muted-foreground">
-                See how we&apos;re transforming dumping sites into community gardens
+                Recent moments from the Colleen Williams Memorial Garden
               </p>
             </div>
 
-            <Card className="overflow-hidden">
-              <div className="aspect-video">
-                <iframe
-                  src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fshare%2Fp%2F1EqQnEjcoi%2F&show_text=false"
-                  className="h-full w-full"
-                  style={{ border: "none", overflow: "hidden" }}
-                  allowFullScreen
-                  allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                  title="Anti-Dumping Campaign Video"
-                />
+            <Card className="mb-12 overflow-hidden">
+              <div className="aspect-video bg-black">
+                <video
+                  className="h-full w-full object-cover"
+                  controls
+                  playsInline
+                  preload="metadata"
+                  title={gardenVideo.title}
+                >
+                  <source src={gardenVideo.src} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
               </div>
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
@@ -379,14 +484,29 @@ export default function GardenPage() {
                     <Play className="h-6 w-6 text-primary-foreground" />
                   </div>
                   <div>
-                    <p className="font-semibold text-card-foreground">Community Clean-Up Day</p>
-                    <p className="text-sm text-muted-foreground">
-                      Watch our volunteers transform Bonteheuwel one site at a time
-                    </p>
+                    <p className="font-semibold text-card-foreground">{gardenVideo.title}</p>
+                    <p className="text-sm text-muted-foreground">{gardenVideo.caption}</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
+
+            <div className="columns-1 gap-x-6 sm:columns-2 lg:columns-3">
+              {gardenGallery.map((image) => (
+                <div key={image.src} className="mb-6 break-inside-avoid">
+                  <div className="overflow-hidden rounded-2xl bg-card shadow-sm">
+                    <Image
+                      src={image.src}
+                      alt={image.alt}
+                      width={image.width}
+                      height={image.height}
+                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                      className="h-auto w-full object-cover"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
