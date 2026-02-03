@@ -151,7 +151,7 @@ const gardenGallery = [
 ];
 
 const gardenVideo = {
-  src: "/videos/bonteheuwel-community-garden-2026-01-08.mp4",
+  embedUrl: "https://www.youtube.com/embed/6JHKTyjyXOs",
   title: "Colleen Williams Memorial Garden video update",
   caption: "A short look at the community garden in Bonteheuwel.",
 };
@@ -467,16 +467,13 @@ export default function GardenPage() {
 
             <Card className="mb-12 overflow-hidden">
               <div className="aspect-video bg-black">
-                <video
-                  className="h-full w-full object-cover"
-                  controls
-                  playsInline
-                  preload="metadata"
+                <iframe
+                  className="h-full w-full"
+                  src={gardenVideo.embedUrl}
                   title={gardenVideo.title}
-                >
-                  <source src={gardenVideo.src} type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
               </div>
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
