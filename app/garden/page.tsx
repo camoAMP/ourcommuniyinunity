@@ -466,7 +466,7 @@ export default function GardenPage() {
             </div>
 
             <Card className="mb-12 overflow-hidden">
-              <div className="aspect-video bg-black">
+              <div className="mx-auto aspect-[9/16] w-full max-w-sm bg-black md:max-w-md">
                 <iframe
                   className="h-full w-full"
                   src={gardenVideo.embedUrl}
