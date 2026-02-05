@@ -25,8 +25,6 @@ import {
   Play,
   Volume2,
   VolumeX,
-  Sun,
-  Moon,
   WifiOff,
   Target,
   User,
@@ -51,7 +49,6 @@ const AIContext = createContext<AIContextValue | null>(null);
 const StudyBuddyApp = () => {
   const [activePage, setActivePage] = useState("talkback");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [theme, setTheme] = useState("dark");
   const [gradeLevel, setGradeLevel] = useState("7-9");
   const [connectionStatus, setConnectionStatus] = useState("online");
   const [activeModel, setActiveModel] = useState("online");
@@ -75,16 +72,6 @@ const StudyBuddyApp = () => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const modelWorkerRef = useRef<Worker | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-
-  // Theme management
-  useEffect(() => {
-    if (theme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-    document.documentElement.style.backgroundColor = "var(--background)";
-  }, [theme]);
 
   // Network status detection
   useEffect(() => {
@@ -612,18 +599,12 @@ const StudyBuddyApp = () => {
         offlineModelStatus,
       }}
     >
-      <div
-        className={`flex min-h-screen bg-background text-foreground transition-colors duration-200 ${
-          theme === "light" ? "bg-background text-foreground" : ""
-        }`}
-      >
+      <div className="flex min-h-screen bg-background text-foreground transition-colors duration-200">
         {/* Sidebar */}
         <motion.aside
           initial={{ width: isSidebarOpen ? 240 : 72 }}
           animate={{ width: isSidebarOpen ? 240 : 72 }}
-          className={`flex h-full flex-col border-r border-border bg-card ${
-            theme === "light" ? "border-border bg-background" : ""
-          }`}
+          className="flex h-full flex-col border-r border-border bg-card"
         >
           <div className="flex items-center justify-between p-4">
             <motion.div
@@ -631,8 +612,8 @@ const StudyBuddyApp = () => {
               animate={{ opacity: isSidebarOpen ? 1 : 0 }}
               className="flex items-center space-x-2"
             >
-              <GraduationCap className="text-primary" size={24} />
-              <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-xl font-bold text-transparent">
+              <GraduationCap className="text-foreground" size={24} />
+              <span className="bg-muted text-xl font-bold text-foreground">
                 StudyBuddy AI
               </span>
             </motion.div>
@@ -655,8 +636,8 @@ const StudyBuddyApp = () => {
                 onClick={() => setActivePage(item.id)}
                 className={`flex w-full items-center rounded-lg p-3 transition-colors ${
                   activePage === item.id
-                    ? "bg-primary/10 text-primary"
-                    : "text-foreground/80 hover:bg-muted/70"
+                    ? "bg-muted text-foreground"
+                    : "text-foreground/80 hover:bg-muted"
                 }`}
               >
                 <item.icon size={20} />
@@ -678,12 +659,12 @@ const StudyBuddyApp = () => {
               className="space-y-3"
             >
               <div className="flex items-center space-x-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-primary to-secondary">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
                   <span className="text-sm font-bold text-foreground">S</span>
                 </div>
                 <div>
                   <p className="text-sm font-medium">StudyBuddy AI</p>
-                  <p className="text-xs font-medium text-primary">
+                  <p className="text-xs font-medium text-foreground">
                     Free Forever Tutor
                   </p>
                 </div>
@@ -692,7 +673,7 @@ const StudyBuddyApp = () => {
               <div className="pt-2">
                 <div className="mb-1 flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">Grade Level:</span>
-                  <span className="font-medium text-primary">
+                  <span className="font-medium text-foreground">
                     {gradeLevel.toUpperCase()}
                   </span>
                 </div>
@@ -700,10 +681,10 @@ const StudyBuddyApp = () => {
                   <div
                     className={`h-1.5 rounded-full ${
                       gradeLevel === "7-9"
-                        ? "bg-green-500"
+                        ? "bg-muted"
                         : gradeLevel === "10-12"
-                        ? "bg-primary"
-                        : "bg-purple-500"
+                        ? "bg-muted"
+                        : "bg-muted"
                     }`}
                     style={{
                       width:
@@ -723,8 +704,8 @@ const StudyBuddyApp = () => {
                   <span
                     className={`font-medium ${
                       activeModel === "offline"
-                        ? "text-green-400"
-                        : "text-primary"
+                        ? "text-foreground"
+                        : "text-foreground"
                     }`}
                   >
                     {activeModel === "offline" ? "OFFLINE" : "ONLINE"}
@@ -734,8 +715,8 @@ const StudyBuddyApp = () => {
                   <div
                     className={`h-1.5 rounded-full ${
                       activeModel === "offline"
-                        ? "bg-gradient-to-r from-green-500 to-emerald-600"
-                        : "bg-gradient-to-r from-primary to-secondary"
+                        ? "bg-muted  "
+                        : "bg-muted  "
                     }`}
                     style={{ width: activeModel === "offline" ? "100%" : "75%" }}
                   ></div>
@@ -748,12 +729,8 @@ const StudyBuddyApp = () => {
         {/* Main Content */}
         <div className="flex-1 overflow-auto">
           {/* Header */}
-          <header
-            className={`flex items-center justify-between border-b border-border bg-card/80 p-4 backdrop-blur-sm ${
-              theme === "light" ? "border-border bg-background/80" : ""
-            }`}
-          >
-            <h1 className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-2xl font-bold text-transparent">
+          <header className="flex items-center justify-between border-b border-border bg-card p-4">
+            <h1 className="text-2xl font-bold text-foreground">
               {activePage === "talkback"
                 ? "Live Tutor Session"
                 : activePage === "localmodel"
@@ -765,7 +742,7 @@ const StudyBuddyApp = () => {
             <div className="flex items-center space-x-4">
               {/* Grade Level Selector */}
               <div className="group relative">
-                <button className="flex items-center space-x-2 text-primary transition-colors hover:text-primary">
+                <button className="flex items-center space-x-2 text-foreground transition-colors hover:text-foreground">
                   <GraduationCap size={20} />
                   <span className="hidden sm:inline">Grade {gradeLevel}</span>
                 </button>
@@ -779,14 +756,14 @@ const StudyBuddyApp = () => {
                       onClick={() => handleGradeLevelChange(level.id)}
                       className={`flex w-full items-center space-x-3 rounded-lg p-3 text-left transition-colors ${
                         gradeLevel === level.id
-                          ? "bg-primary/10 text-primary"
-                          : "text-foreground/80 hover:bg-muted/70"
+                          ? "bg-muted text-foreground"
+                          : "text-foreground/80 hover:bg-muted"
                       }`}
                     >
                       <level.icon
                         className={`h-5 w-5 ${
                           gradeLevel === level.id
-                            ? "text-primary"
+                            ? "text-foreground"
                             : "text-muted-foreground"
                         }`}
                       />
@@ -807,13 +784,13 @@ const StudyBuddyApp = () => {
                   onClick={() => energyPoints === 0 && watchAdForEnergy()}
                   className={`flex items-center space-x-1 rounded-full px-3 py-1 text-sm font-medium ${
                     energyPoints > 0
-                      ? "bg-primary/10 text-primary"
-                      : "bg-red-500/20 text-red-300 hover:bg-red-500/30"
+                      ? "bg-muted text-foreground"
+                      : "bg-muted text-foreground hover:bg-muted"
                   }`}
                 >
                   <Battery
                     className={`h-4 w-4 ${
-                      energyPoints > 0 ? "text-primary" : "text-red-400"
+                      energyPoints > 0 ? "text-foreground" : "text-foreground"
                     }`}
                   />
                   <span>
@@ -821,14 +798,14 @@ const StudyBuddyApp = () => {
                   </span>
                 </button>
                 {energyPoints === 0 && (
-                  <div className="absolute right-0 mt-2 w-64 rounded-lg border border-red-500/30 bg-card p-3 text-sm text-red-300 shadow-lg z-50">
+                  <div className="absolute right-0 mt-2 w-64 rounded-lg border border-border bg-card p-3 text-sm text-foreground shadow-lg z-50">
                     <p className="font-medium">Visualizations Used Up!</p>
                     <p className="mt-1">
                       Watch a short ad to unlock 5 more visual explanations today.
                     </p>
                     <button
                       onClick={watchAdForEnergy}
-                      className="mt-2 flex w-full items-center justify-center space-x-1 rounded-lg bg-red-500/20 px-3 py-1 text-sm font-medium text-red-300 hover:bg-red-500/30"
+                      className="mt-2 flex w-full items-center justify-center space-x-1 rounded-lg bg-muted px-3 py-1 text-sm font-medium text-foreground hover:bg-muted"
                     >
                       <Play size={14} />
                       <span>Watch Ad for 5 More</span>
@@ -837,29 +814,21 @@ const StudyBuddyApp = () => {
                 )}
               </div>
 
-              {/* Theme Toggle */}
-              <button
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="text-muted-foreground transition-colors hover:text-primary"
-              >
-                {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-              </button>
-
               {/* Connection Status */}
               <div className="relative">
                 {connectionStatus === "online" ? (
-                  <Wifi className="h-5 w-5 text-green-400" />
+                  <Wifi className="h-5 w-5 text-foreground" />
                 ) : (
-                  <WifiOff className="h-5 w-5 animate-pulse text-red-400" />
+                  <WifiOff className="h-5 w-5 animate-pulse text-foreground" />
                 )}
                 {connectionStatus === "offline" && (
-                  <div className="absolute -top-8 right-0 whitespace-nowrap rounded bg-red-500/90 px-2 py-1 text-xs text-white shadow-lg">
+                  <div className="absolute -top-8 right-0 whitespace-nowrap rounded bg-muted px-2 py-1 text-xs text-foreground shadow-lg">
                     Offline Mode Active
                   </div>
                 )}
               </div>
 
-              <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-border bg-gradient-to-r from-primary to-secondary text-sm font-bold">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-muted text-sm font-bold">
                 S
               </div>
             </div>
@@ -871,19 +840,19 @@ const StudyBuddyApp = () => {
             {activePage === "dashboard" && (
               <div className="space-y-6">
                 <div className="mb-6 flex items-center space-x-3">
-                  <Brain className="text-primary" size={32} />
-                  <h1 className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-3xl font-bold text-transparent">
+                  <Brain className="text-foreground" size={32} />
+                  <h1 className="text-3xl font-bold text-foreground">
                     Welcome to StudyBuddy AI
                   </h1>
                 </div>
 
-                <div className="rounded-xl border border-border bg-card/80 p-6">
+                <div className="rounded-xl border border-border bg-card p-6">
                   <div className="py-12 text-center">
-                    <div className="inline-block rounded-2xl border border-primary/30 bg-card/80 p-6">
-                      <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                        <Brain className="text-primary" size={32} />
+                    <div className="inline-block rounded-2xl border border-border bg-card p-6">
+                      <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+                        <Brain className="text-foreground" size={32} />
                       </div>
-                      <h2 className="mb-3 text-2xl font-bold text-primary">
+                      <h2 className="mb-3 text-2xl font-bold text-foreground">
                         Start Your Learning Journey
                       </h2>
                       <p className="mx-auto mb-6 max-w-md text-muted-foreground">
@@ -893,7 +862,7 @@ const StudyBuddyApp = () => {
                       </p>
                       <button
                         onClick={() => setActivePage("talkback")}
-                        className="rounded-lg bg-gradient-to-r from-primary to-secondary px-6 py-3 font-medium text-white transition-all hover:from-primary hover:to-secondary"
+                        className="rounded-lg bg-muted px-6 py-3 font-medium text-foreground transition-all"
                       >
                         Start Learning Now
                       </button>
@@ -906,19 +875,19 @@ const StudyBuddyApp = () => {
             {/* Talkback/Live Tutor Page */}
             {activePage === "talkback" && (
               <div className="mx-auto max-w-4xl">
-                <div className="rounded-xl border border-border bg-card/80 p-6">
+                <div className="rounded-xl border border-border bg-card p-6">
                   <div className="mb-6 flex items-center justify-between">
                     <h2 className="flex items-center text-2xl font-bold">
-                      <Mic className="mr-2 text-primary" size={28} />
-                      <span className="text-primary">StudyBuddy</span> Live Tutor
+                      <Mic className="mr-2 text-foreground" size={28} />
+                      <span className="text-foreground">StudyBuddy</span> Live Tutor
                     </h2>
                     <div className="flex items-center space-x-3">
                       <div className="group relative">
                         <button
                           className={`rounded-full p-2 ${
                             activeModel === "offline"
-                              ? "bg-green-500/20 text-green-300"
-                              : "bg-primary/10 text-primary"
+                              ? "bg-muted text-foreground"
+                              : "bg-muted text-foreground"
                           }`}
                         >
                           {activeModel === "offline" ? (
@@ -938,7 +907,7 @@ const StudyBuddyApp = () => {
                         disabled={!speechOutputSupported}
                         className={`flex items-center rounded-full px-3 py-1 text-sm font-medium ${
                           autoSpeak
-                            ? "bg-primary/10 text-primary"
+                            ? "bg-muted text-foreground"
                             : "bg-muted text-muted-foreground"
                         } ${!speechOutputSupported ? "cursor-not-allowed opacity-60" : ""}`}
                       >
@@ -949,16 +918,16 @@ const StudyBuddyApp = () => {
                   </div>
 
                   {/* Grade Level Display */}
-                  <div className="mb-4 rounded-xl border border-primary/30 bg-muted/60 p-3 text-center">
+                  <div className="mb-4 rounded-xl border border-border bg-muted p-3 text-center">
                     <div className="flex items-center justify-center space-x-2">
-                      <GraduationCap className="text-primary" size={18} />
-                      <span className="font-medium text-primary">
+                      <GraduationCap className="text-foreground" size={18} />
+                      <span className="font-medium text-foreground">
                         Grade Level:
                       </span>
                       <select
                         value={gradeLevel}
                         onChange={(e) => handleGradeLevelChange(e.target.value)}
-                        className="rounded-lg border border-primary/30 bg-muted px-2 py-1 text-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="rounded-lg border border-border bg-muted px-2 py-1 text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                       >
                         {gradeLevels.map((level) => (
                           <option key={level.id} value={level.id}>
@@ -977,8 +946,8 @@ const StudyBuddyApp = () => {
                     </p>
                   </div>
 
-                  <div className="mb-6 rounded-xl border border-primary/30 bg-muted/60 p-4">
-                    <h3 className="mb-2 flex items-center font-medium text-primary">
+                  <div className="mb-6 rounded-xl border border-border bg-muted p-4">
+                    <h3 className="mb-2 flex items-center font-medium text-foreground">
                       <Lightbulb className="mr-2" size={18} /> Quick Learning
                       Prompts:
                     </h3>
@@ -994,7 +963,7 @@ const StudyBuddyApp = () => {
                         <button
                           key={index}
                           onClick={() => handleUserMessage(prompt)}
-                          className="rounded-lg border border-primary/30 bg-muted px-3 py-1 text-sm text-primary transition-colors hover:bg-primary/10"
+                          className="rounded-lg border border-border bg-muted px-3 py-1 text-sm text-foreground transition-colors hover:bg-muted"
                         >
                           {prompt}
                         </button>
@@ -1005,12 +974,12 @@ const StudyBuddyApp = () => {
                   {(!isSecureContext ||
                     !speechSupported ||
                     !speechOutputSupported) && (
-                    <div className="mb-6 rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 text-amber-200">
+                    <div className="mb-6 rounded-xl border border-border bg-muted p-4 text-foreground">
                       <div className="flex items-start gap-3">
-                        <AlertTriangle size={18} className="mt-0.5 text-amber-200" />
+                        <AlertTriangle size={18} className="mt-0.5 text-foreground" />
                         <div>
                           <p className="font-medium">Browser compatibility notice</p>
-                          <div className="mt-1 space-y-1 text-sm text-amber-100/90">
+                          <div className="mt-1 space-y-1 text-sm text-foreground">
                             {!isSecureContext && (
                               <p>Voice features require a secure (HTTPS) connection.</p>
                             )}
@@ -1029,8 +998,8 @@ const StudyBuddyApp = () => {
                   <div className="mb-6 h-[60vh] overflow-y-auto rounded-xl border border-border bg-card p-5">
                     {conversation.length === 0 ? (
                       <div className="flex h-full flex-col items-center justify-center text-muted-foreground">
-                        <Brain className="mb-4 h-16 w-16 text-primary/50" />
-                        <p className="mb-2 text-xl font-bold text-primary">
+                        <Brain className="mb-4 h-16 w-16 text-foreground" />
+                        <p className="mb-2 text-xl font-bold text-foreground">
                           Start Learning with StudyBuddy AI
                         </p>
                         <p className="max-w-md text-center text-muted-foreground">
@@ -1052,7 +1021,7 @@ const StudyBuddyApp = () => {
                                   `Help me learn ${subject.toLowerCase()} for grade ${gradeLevel}`
                                 )
                               }
-                              className="rounded-lg border border-primary/30 bg-muted/70 p-3 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
+                              className="rounded-lg border border-border bg-muted p-3 text-sm font-medium text-foreground transition-colors hover:bg-muted"
                             >
                               {subject}
                             </button>
@@ -1072,10 +1041,10 @@ const StudyBuddyApp = () => {
                           <div
                             className={`max-w-[85%] rounded-2xl p-4 ${
                               message.role === "user"
-                                ? "rounded-tr-none bg-gradient-to-r from-primary to-secondary text-white"
+                                ? "rounded-tr-none bg-muted   text-foreground"
                                 : message.offline
-                                ? "rounded-tl-none border border-green-500/30 bg-muted/70"
-                                : "rounded-tl-none border border-primary/30 bg-muted/70"
+                                ? "rounded-tl-none border border-border bg-muted"
+                                : "rounded-tl-none border border-border bg-muted"
                             }`}
                           >
                             {message.role === "user" ? (
@@ -1089,22 +1058,22 @@ const StudyBuddyApp = () => {
                             ) : (
                               <div>
                                 <div className="mb-1 flex items-center">
-                                  <div className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary">
+                                  <div className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-muted">
                                     <span className="text-xs font-bold text-foreground">
                                       {message.name?.charAt(0) || "S"}
                                     </span>
                                   </div>
                                   <div className="flex items-center space-x-2">
-                                    <p className="font-medium text-primary">
+                                    <p className="font-medium text-foreground">
                                       {message.name || "StudyBuddy"}
                                     </p>
                                     {message.offline && (
-                                      <span className="rounded-full bg-green-500/20 px-1.5 py-0.5 text-xs text-green-300">
+                                      <span className="rounded-full bg-muted px-1.5 py-0.5 text-xs text-foreground">
                                         OFFLINE
                                       </span>
                                     )}
                                     {message.gradeLevel && (
-                                      <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-xs text-primary">
+                                      <span className="rounded-full bg-muted px-1.5 py-0.5 text-xs text-foreground">
                                         Grade {message.gradeLevel}
                                       </span>
                                     )}
@@ -1123,21 +1092,21 @@ const StudyBuddyApp = () => {
                                 </p>
 
                                 {message.requiresAdReward && energyPoints === 0 && (
-                                  <div className="mt-3 rounded-lg border border-red-500/30 bg-red-500/10 p-3">
+                                  <div className="mt-3 rounded-lg border border-border bg-muted p-3">
                                     <div className="flex items-start space-x-2">
-                                      <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-400" />
+                                      <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-foreground" />
                                       <div>
-                                        <p className="text-sm font-medium text-red-300">
+                                        <p className="text-sm font-medium text-foreground">
                                           Visualizations Limit Reached
                                         </p>
-                                        <p className="mt-1 text-xs text-red-300">
+                                        <p className="mt-1 text-xs text-foreground">
                                           Watch a short ad to unlock 5 more visual
                                           explanations today, or wait until tomorrow
                                           for your daily reset.
                                         </p>
                                         <button
                                           onClick={watchAdForEnergy}
-                                          className="mt-2 flex items-center space-x-1 rounded-lg bg-red-500/20 px-3 py-1 text-xs font-medium text-red-300 hover:bg-red-500/30"
+                                          className="mt-2 flex items-center space-x-1 rounded-lg bg-muted px-3 py-1 text-xs font-medium text-foreground hover:bg-muted"
                                         >
                                           <Play size={12} />
                                           <span>Watch Ad for 5 More Visuals</span>
@@ -1148,14 +1117,14 @@ const StudyBuddyApp = () => {
                                 )}
 
                                 {message.energyReward && (
-                                  <div className="mt-3 rounded-lg border border-green-500/30 bg-green-500/10 p-3">
+                                  <div className="mt-3 rounded-lg border border-border bg-muted p-3">
                                     <div className="flex items-start space-x-2">
-                                      <Coins className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-400" />
+                                      <Coins className="mt-0.5 h-4 w-4 flex-shrink-0 text-foreground" />
                                       <div>
-                                        <p className="text-sm font-medium text-green-300">
+                                        <p className="text-sm font-medium text-foreground">
                                           Energy Restored!
                                         </p>
-                                        <p className="mt-1 text-xs text-green-300">
+                                        <p className="mt-1 text-xs text-foreground">
                                           You now have {dailyLimit} visual explanations
                                           available for today. Ask for diagrams,
                                           animations, and visual aids whenever you need
@@ -1167,7 +1136,7 @@ const StudyBuddyApp = () => {
                                 )}
 
                                 {message.error && (
-                                  <div className="mt-2 rounded-lg border border-red-500/30 bg-red-500/10 p-2 text-xs text-red-300">
+                                  <div className="mt-2 rounded-lg border border-border bg-muted p-2 text-xs text-foreground">
                                     <AlertTriangle className="mr-1 inline h-3 w-3" />
                                     Error processing your request. Please try again.
                                   </div>
@@ -1181,10 +1150,10 @@ const StudyBuddyApp = () => {
 
                     {isListening && (
                       <div className="mb-4 flex justify-start">
-                        <div className="rounded-2xl rounded-tl-none border border-primary/30 bg-muted/70 p-4">
+                        <div className="rounded-2xl rounded-tl-none border border-border bg-muted p-4">
                           <div className="flex items-center space-x-2">
-                            <div className="h-2 w-2 animate-pulse rounded-full bg-primary" />
-                            <span className="text-primary">
+                            <div className="h-2 w-2 animate-pulse rounded-full bg-muted" />
+                            <span className="text-foreground">
                               StudyBuddy is listening...
                             </span>
                           </div>
@@ -1203,7 +1172,7 @@ const StudyBuddyApp = () => {
                       disabled={!speechSupported}
                       className={`rounded-full p-3 transition-all ${
                         isListening
-                          ? "border border-primary bg-primary/10 text-primary"
+                          ? "border border-border bg-muted text-foreground"
                           : "border border-border bg-muted text-foreground/80 hover:bg-muted"
                       }`}
                     >
@@ -1219,7 +1188,7 @@ const StudyBuddyApp = () => {
                           ? "high school"
                           : "university prep"
                       } topics...`}
-                      className="flex-1 rounded-lg border border-border bg-muted px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="flex-1 rounded-lg border border-border bg-muted px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
                           const value = e.currentTarget.value;
@@ -1237,14 +1206,14 @@ const StudyBuddyApp = () => {
                           inputRef.current.value = "";
                         }
                       }}
-                      className="rounded-lg bg-gradient-to-r from-primary to-secondary px-6 py-3 font-medium text-white transition-all hover:from-primary hover:to-secondary"
+                      className="rounded-lg bg-muted px-6 py-3 font-medium text-foreground transition-all"
                     >
                       Send
                     </button>
                   </div>
 
-                  <div className="mt-4 rounded-lg border border-primary/30 bg-muted/60 p-3 text-center">
-                    <p className="text-sm text-primary">
+                  <div className="mt-4 rounded-lg border border-border bg-muted p-3 text-center">
+                    <p className="text-sm text-foreground">
                       <span className="font-medium">Learning Tip:</span> Type
                       "visualize [topic]" for diagrams, "real-life example" for
                       practical applications, or "break down" for step-by-step
@@ -1258,59 +1227,59 @@ const StudyBuddyApp = () => {
             {/* Offline Model Page */}
             {activePage === "localmodel" && (
               <div className="mx-auto max-w-4xl">
-                <div className="rounded-xl border border-border bg-card/80 p-6">
+                <div className="rounded-xl border border-border bg-card p-6">
                   <div className="mb-6 flex items-center space-x-3">
-                    <Cpu className="text-green-400" size={32} />
-                    <h2 className="bg-gradient-to-r from-green-400 to-emerald-300 bg-clip-text text-3xl font-bold text-transparent">
+                    <Cpu className="text-foreground" size={32} />
+                    <h2 className="text-3xl font-bold text-foreground">
                       Offline AI Model
                     </h2>
                   </div>
 
                   <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                     <div className="space-y-6">
-                      <div className="rounded-lg border border-green-500/30 bg-muted/60 p-4">
-                        <h3 className="mb-2 font-medium text-green-300">
+                      <div className="rounded-lg border border-border bg-muted p-4">
+                        <h3 className="mb-2 font-medium text-foreground">
                           Offline Mode Benefits
                         </h3>
                         <ul className="space-y-2 text-foreground/80">
                           <li className="flex items-start">
-                            <span className="mr-2 mt-1 text-green-400">✓</span>
+                            <span className="mr-2 mt-1 text-foreground">✓</span>
                             <span>No internet connection required</span>
                           </li>
                           <li className="flex items-start">
-                            <span className="mr-2 mt-1 text-green-400">✓</span>
+                            <span className="mr-2 mt-1 text-foreground">✓</span>
                             <span>Maximum privacy - no data leaves your device</span>
                           </li>
                           <li className="flex items-start">
-                            <span className="mr-2 mt-1 text-green-400">✓</span>
+                            <span className="mr-2 mt-1 text-foreground">✓</span>
                             <span>Works anywhere - school, home, or on the bus</span>
                           </li>
                           <li className="flex items-start">
-                            <span className="mr-2 mt-1 text-green-400">✓</span>
+                            <span className="mr-2 mt-1 text-foreground">✓</span>
                             <span>Free forever - no API costs or subscriptions</span>
                           </li>
                         </ul>
                       </div>
 
-                      <div className="rounded-lg border border-primary/30 bg-muted/60 p-4">
-                        <h3 className="mb-2 font-medium text-primary">
+                      <div className="rounded-lg border border-border bg-muted p-4">
+                        <h3 className="mb-2 font-medium text-foreground">
                           Model Capabilities
                         </h3>
                         <ul className="space-y-2 text-foreground/80">
                           <li className="flex items-start">
-                            <span className="mr-2 mt-1 text-primary">•</span>
+                            <span className="mr-2 mt-1 text-foreground">•</span>
                             <span>Math explanations with step-by-step solutions</span>
                           </li>
                           <li className="flex items-start">
-                            <span className="mr-2 mt-1 text-primary">•</span>
+                            <span className="mr-2 mt-1 text-foreground">•</span>
                             <span>Science concepts with real-world analogies</span>
                           </li>
                           <li className="flex items-start">
-                            <span className="mr-2 mt-1 text-primary">•</span>
+                            <span className="mr-2 mt-1 text-foreground">•</span>
                             <span>Biology topics from cells to ecosystems</span>
                           </li>
                           <li className="flex items-start">
-                            <span className="mr-2 mt-1 text-primary">•</span>
+                            <span className="mr-2 mt-1 text-foreground">•</span>
                             <span>Grade-appropriate explanations for 7-12</span>
                           </li>
                         </ul>
@@ -1319,24 +1288,24 @@ const StudyBuddyApp = () => {
 
                     <div className="space-y-6">
                       <div
-                        className={`rounded-xl border-2 p-6 text-center ${
+                        className={`rounded-xl border p-6 text-center ${
                           offlineModelStatus === "loaded"
-                            ? "border-green-500 bg-green-500/10"
+                            ? "border-border bg-muted"
                             : offlineModelStatus === "loading"
-                            ? "border-amber-500 bg-amber-500/10"
+                            ? "border-border bg-muted"
                             : offlineModelStatus === "error"
-                            ? "border-red-500/60 bg-red-500/10"
-                            : "border-border bg-muted/60"
+                            ? "border-border bg-muted"
+                            : "border-border bg-muted"
                         }`}
                       >
                         <div className="mb-4 flex justify-center">
                           {offlineModelStatus === "loaded" && (
-                            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-500/20">
-                              <Check className="text-green-400" size={32} />
+                            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+                              <Check className="text-foreground" size={32} />
                             </div>
                           )}
                           {offlineModelStatus === "loading" && (
-                            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-500/20">
+                            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
                               <motion.div
                                 animate={{ rotate: 360 }}
                                 transition={{
@@ -1345,13 +1314,13 @@ const StudyBuddyApp = () => {
                                   ease: "linear",
                                 }}
                               >
-                                <Settings className="text-amber-400" size={32} />
+                                <Settings className="text-foreground" size={32} />
                               </motion.div>
                             </div>
                           )}
                           {offlineModelStatus === "error" && (
-                            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-500/20">
-                              <AlertTriangle className="text-red-300" size={32} />
+                            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+                              <AlertTriangle className="text-foreground" size={32} />
                             </div>
                           )}
                           {offlineModelStatus === "not-loaded" && (
@@ -1387,7 +1356,7 @@ const StudyBuddyApp = () => {
                               setOfflineModelStatus("loading");
                               loadOfflineModel();
                             }}
-                            className="w-full rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-3 font-medium text-white transition-all hover:from-green-600 hover:to-emerald-700"
+                            className="w-full rounded-lg bg-muted px-6 py-3 font-medium text-foreground transition-all"
                           >
                             Load Offline Model
                           </button>
@@ -1396,44 +1365,44 @@ const StudyBuddyApp = () => {
                         {offlineModelStatus === "loading" && (
                           <div className="mt-4 h-2 w-full rounded-full bg-muted">
                             <div
-                              className="h-2 rounded-full bg-gradient-to-r from-green-500 to-emerald-600"
+                              className="h-2 rounded-full bg-muted"
                               style={{ width: `${modelProgress}%` }}
                             ></div>
                           </div>
                         )}
                       </div>
 
-                      <div className="rounded-lg border border-purple-500/30 bg-muted/60 p-4">
-                        <h3 className="mb-2 font-medium text-purple-300">
+                      <div className="rounded-lg border border-border bg-muted p-4">
+                        <h3 className="mb-2 font-medium text-foreground">
                           Technical Details
                         </h3>
                         <ul className="space-y-2 text-sm text-foreground/80">
                           <li>
-                            <span className="font-medium text-purple-400">
+                            <span className="font-medium text-foreground">
                               Model:
                             </span>{" "}
                             Llama-3.2-1B-Instruct (Quantized)
                           </li>
                           <li>
-                            <span className="font-medium text-purple-400">
+                            <span className="font-medium text-foreground">
                               Size:
                             </span>{" "}
                             Approximately 1.5GB
                           </li>
                           <li>
-                            <span className="font-medium text-purple-400">
+                            <span className="font-medium text-foreground">
                               Storage:
                             </span>{" "}
                             Stored locally on your device
                           </li>
                           <li>
-                            <span className="font-medium text-purple-400">
+                            <span className="font-medium text-foreground">
                               Requirements:
                             </span>{" "}
                             4GB RAM minimum, modern browser
                           </li>
                           <li>
-                            <span className="font-medium text-purple-400">
+                            <span className="font-medium text-foreground">
                               Privacy:
                             </span>{" "}
                             100% offline - no data collection
@@ -1449,18 +1418,18 @@ const StudyBuddyApp = () => {
             {/* Upload Page */}
             {activePage === "upload" && (
               <div className="mx-auto max-w-4xl py-16 text-center">
-                <div className="inline-block rounded-2xl border border-primary/30 bg-card/80 p-6">
-                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                    <Upload className="text-primary" size={32} />
+                <div className="inline-block rounded-2xl border border-border bg-card p-6">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+                    <Upload className="text-foreground" size={32} />
                   </div>
-                  <h2 className="mb-3 text-2xl font-bold text-primary">
+                  <h2 className="mb-3 text-2xl font-bold text-foreground">
                     Upload Learning Materials
                   </h2>
                   <p className="mx-auto mb-6 max-w-md text-muted-foreground">
                     Upload PDFs, documents, images, or videos for StudyBuddy to
                     analyze. Your content is processed locally for maximum privacy.
                   </p>
-                  <button className="rounded-lg bg-gradient-to-r from-primary to-secondary px-6 py-3 font-medium text-white transition-all hover:from-primary hover:to-secondary">
+                  <button className="rounded-lg bg-muted px-6 py-3 font-medium text-foreground transition-all">
                     Start Uploading
                   </button>
                 </div>
@@ -1470,30 +1439,25 @@ const StudyBuddyApp = () => {
             {/* Settings Page */}
             {activePage === "settings" && (
               <div className="mx-auto max-w-2xl">
-                <div className="rounded-xl border border-border bg-card/80 p-6">
+                <div className="rounded-xl border border-border bg-card p-6">
                   <div className="mb-6 flex items-center space-x-3">
-                    <Settings className="text-primary" size={32} />
-                    <h2 className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-3xl font-bold text-transparent">
+                    <Settings className="text-foreground" size={32} />
+                    <h2 className="text-3xl font-bold text-foreground">
                       Settings & Preferences
                     </h2>
                   </div>
 
                   <div className="space-y-6">
-                    <div className="rounded-lg border border-primary/30 bg-muted/60 p-4">
-                      <h3 className="mb-3 font-medium text-primary">
+                    <div className="rounded-lg border border-border bg-muted p-4">
+                      <h3 className="mb-3 font-medium text-foreground">
                         Appearance
                       </h3>
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
                           <span className="text-foreground/80">Theme</span>
-                          <select
-                            value={theme}
-                            onChange={(e) => setTheme(e.target.value)}
-                            className="rounded-lg border border-border bg-muted px-3 py-1 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                          >
-                            <option value="dark">Dark Theme</option>
-                            <option value="light">Light Theme</option>
-                          </select>
+                          <span className="rounded-lg border border-border bg-muted px-3 py-1 text-foreground">
+                            Site Default
+                          </span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-foreground/80">Auto-speak responses</span>
@@ -1512,14 +1476,14 @@ const StudyBuddyApp = () => {
                               onChange={(e) => setAutoSpeak(e.target.checked)}
                               disabled={!speechOutputSupported}
                             />
-                            <div className="peer h-6 w-11 rounded-full bg-muted after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-border after:bg-background after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-primary peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/30"></div>
+                            <div className="peer h-6 w-11 rounded-full bg-muted after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-border after:bg-background after:transition-all after:content-[''] peer-checked:bg-muted peer-checked:after:translate-x-full peer-checked:after:border-border peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-ring/50"></div>
                           </label>
                         </div>
                       </div>
                     </div>
 
-                    <div className="rounded-lg border border-green-500/30 bg-muted/60 p-4">
-                      <h3 className="mb-3 font-medium text-green-300">
+                    <div className="rounded-lg border border-border bg-muted p-4">
+                      <h3 className="mb-3 font-medium text-foreground">
                         Learning Preferences
                       </h3>
                       <div className="space-y-3">
@@ -1528,7 +1492,7 @@ const StudyBuddyApp = () => {
                           <select
                             value={gradeLevel}
                             onChange={(e) => setGradeLevel(e.target.value)}
-                            className="rounded-lg border border-border bg-muted px-3 py-1 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                            className="rounded-lg border border-border bg-muted px-3 py-1 text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                           >
                             {gradeLevels.map((level) => (
                               <option key={level.id} value={level.id}>
@@ -1542,7 +1506,7 @@ const StudyBuddyApp = () => {
                           <select
                             value={activeModel}
                             onChange={(e) => setActiveModel(e.target.value)}
-                            className="rounded-lg border border-border bg-muted px-3 py-1 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                            className="rounded-lg border border-border bg-muted px-3 py-1 text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                           >
                             <option value="online">
                               Online Mode (Full Features)
@@ -1555,13 +1519,13 @@ const StudyBuddyApp = () => {
                       </div>
                     </div>
 
-                    <div className="rounded-lg border border-purple-500/30 bg-muted/60 p-4">
-                      <h3 className="mb-3 font-medium text-purple-300">
+                    <div className="rounded-lg border border-border bg-muted p-4">
+                      <h3 className="mb-3 font-medium text-foreground">
                         Privacy & Data
                       </h3>
                       <div className="space-y-3">
                         <div className="flex items-start">
-                          <Shield className="mr-2 mt-1 text-purple-400" size={18} />
+                          <Shield className="mr-2 mt-1 text-foreground" size={18} />
                           <div>
                             <p className="font-medium text-foreground/80">
                               Local Data Storage
@@ -1574,7 +1538,7 @@ const StudyBuddyApp = () => {
                           </div>
                         </div>
                         <div className="flex items-start">
-                          <EyeOff className="mr-2 mt-1 text-purple-400" size={18} />
+                          <EyeOff className="mr-2 mt-1 text-foreground" size={18} />
                           <div>
                             <p className="font-medium text-foreground/80">
                               Offline Mode Privacy
@@ -1588,7 +1552,7 @@ const StudyBuddyApp = () => {
                       </div>
                     </div>
 
-                    <button className="w-full rounded-lg bg-gradient-to-r from-primary to-secondary px-6 py-3 font-medium text-white transition-all hover:from-primary hover:to-secondary">
+                    <button className="w-full rounded-lg bg-muted px-6 py-3 font-medium text-foreground transition-all">
                       Save Settings
                     </button>
                   </div>
@@ -1601,9 +1565,9 @@ const StudyBuddyApp = () => {
               activeModel === "online" &&
               connectionStatus === "online" &&
               activePage === "talkback" && (
-                <div className="mt-6 rounded-lg border border-dashed border-border bg-card/80 p-3 text-center">
+                <div className="mt-6 rounded-lg border border-border bg-card p-3 text-center">
                   <div className="flex items-center justify-center space-x-2">
-                    <Coins className="text-yellow-400" size={18} />
+                    <Coins className="text-foreground" size={18} />
                     <span className="text-sm text-muted-foreground">
                       Support free education - Ads help keep StudyBuddy AI free for
                       everyone

@@ -9,7 +9,6 @@ import {
   Users,
   HeartHandshake,
   Building2,
-  Scale,
   ArrowRight,
   ChevronLeft,
   ChevronRight,

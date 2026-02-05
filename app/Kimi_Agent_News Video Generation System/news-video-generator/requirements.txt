@@ -1,0 +1,16 @@
+# Python dependencies for video generation
+moviepy==1.0.3
+edge-tts==6.1.9
+requests==2.31.0
+Pillow==10.1.0
+numpy==1.24.3
+python-dotenv==1.0.0
+aiohttp==3.9.1
+asyncio==3.4.3
+
+# Optional for ComfyUI integration
+websocket-client==1.7.0
+
+# Development
+pytest==7.4.3
+black==23.11.0

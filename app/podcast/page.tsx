@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { PodcastEpisodesList } from "@/components/podcast/episodes-list";
+import { getSpotifyShowId, getSpotifyShowUrl } from "@/lib/spotify";
 import { Headphones, Mic, Radio } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -15,6 +16,9 @@ export const metadata: Metadata = {
 };
 
 export default function PodcastPage() {
+  const spotifyShowId = getSpotifyShowId();
+  const spotifyShowUrl = getSpotifyShowUrl();
+
   return (
     <>
       {/* Hero Section */}
@@ -87,20 +91,26 @@ export default function PodcastPage() {
                   priority
                 />
               </div>
-              <div className="w-full max-w-md">
-                <iframe
-                  style={{ borderRadius: "12px" }}
-                  src="https://open.spotify.com/embed/show/7cwfPZpCqL3L1T0gLsjkx0?utm_source=generator&theme=0"
-                  width="100%"
-                  height="352"
-                  frameBorder="0"
-                  allowFullScreen
-                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                  loading="lazy"
-                  title="Spotify Podcast Player - Unspoken Truths"
-                />
-              </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Spotify Player */}
+      <section className="bg-background py-10">
+        <div className="container mx-auto px-4">
+          <div className="mx-auto w-full max-w-3xl rounded-2xl border border-border bg-card p-4 shadow-sm">
+            <iframe
+              style={{ borderRadius: "12px" }}
+              src={`https://open.spotify.com/embed/show/${spotifyShowId}?utm_source=generator&theme=0`}
+              width="100%"
+              height="352"
+              frameBorder="0"
+              allowFullScreen
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"
+              title="Spotify Podcast Player - Unspoken Truths"
+            />
           </div>
         </div>
       </section>
@@ -131,7 +141,7 @@ export default function PodcastPage() {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <a
-              href="https://open.spotify.com/show/7cwfPZpCqL3L1T0gLsjkx0"
+              href={spotifyShowUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-[#1DB954] px-6 py-3 font-medium text-white transition-opacity hover:opacity-90"

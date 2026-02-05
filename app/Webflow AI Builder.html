@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webflow AI Prompt Builder - AEO-Optimized</title>
+    <style>
+        :root {
+            --color-bg-primary: #fcfcf9;
+            --color-bg-surface: #fffffe;
+            --color-text-primary: #13343b;
+            --color-text-secondary: #626c7c;
+            --color-primary: #21808d;
+            --color-primary-hover: #1d7480;
+            --color-border: rgba(94, 82, 64, 0.2);
+            --color-accent: #32b8c6;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-bg-primary: #1f2121;
+                --color-bg-surface: #262828;
+                --color-text-primary: #f5f5f5;
+                --color-text-secondary: #a7a9a9;
+                --color-primary: #32b8c6;
+                --color-primary-hover: #2da6b2;
+                --color-border: rgba(119, 124, 124, 0.3);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+            background: var(--color-bg-surface);
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            color: var(--color-primary);
+        }
+
+        .subtitle {
+            color: var(--color-text-secondary);
+            font-size: 1.125rem;
+        }
+
+        .form-section {
+            background: var(--color-bg-surface);
+            padding: 32px;
+            margin-bottom: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--color-primary);
+        }
+
+        .section-number {
+            background: var(--color-primary);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .section-header h2 {
+            font-size: 1.5rem;
+            color: var(--color-text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--color-text-primary);
+        }
+
+        .label-hint {
+            font-weight: 400;
+            color: var(--color-text-secondary);
+            font-size: 0.875rem;
+            margin-left: 4px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="url"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+            width: 100%;
+            margin-top: 32px;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--color-border);
+            color: var(--color-text-primary);
+            margin-top: 16px;
+            width: 100%;
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-bg-primary);
+        }
+
+        .output-section {
+            background: var(--color-bg-surface);
+            padding: 32px;
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+            margin-top: 40px;
+            display: none;
+        }
+
+        .output-section.active {
+            display: block;
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .output-content {
+            background: var(--color-bg-primary);
+            padding: 24px;
+            border-radius: 8px;
+            border: 1px solid var(--color-border);
+            max-height: 600px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.8;
+        }
+
+        .help-text {
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+            margin-top: 6px;
+            font-style: italic;
+        }
+
+        .required::after {
+            content: " *";
+            color: #c01530;
+        }
+
+        .success-message {
+            background: rgba(33, 128, 141, 0.1);
+            border: 1px solid var(--color-primary);
+            color: var(--color-primary);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .success-message.active {
+            display: block;
+        }
+
+        .collapsible {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .collapsible::before {
+            content: "▼ ";
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+
+        .collapsible.collapsed::before {
+            transform: rotate(-90deg);
+        }
+
+        .collapsible-content {
+            max-height: 2000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .collapsible-content.collapsed {
+            max-height: 0;
+        }
+
+        .info-box {
+            background: rgba(50, 184, 198, 0.1);
+            border-left: 4px solid var(--color-accent);
+            padding: 16px;
+            margin: 16px 0;
+            border-radius: 4px;
+        }
+
+        .info-box strong {
+            color: var(--color-accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div style="display: inline-block; background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); padding: 8px 16px; border-radius: 8px; margin-bottom: 16px;">
+                <span style="font-size: 1.5rem; font-weight: 700;">⚡</span>
+            </div>
+            <h1>Webflow Marketplace AI Builder</h1>
+            <p class="subtitle">Component library + AEO-optimized + Marketplace-ready prompt generator</p>
+        </header>
+
+        <!-- Component Library Preview -->
+        <div class="form-section" style="margin-bottom: 32px;">
+            <div class="section-header">
+                <div class="section-number">📚</div>
+                <h2>Component Library</h2>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px;">
+                <div class="component-card" data-component="hero">
+                    <div class="component-preview" style="background: linear-gradient(135deg, #1a4d5c 0%, #2a6575 100%); padding: 40px 20px; text-align: center; border-radius: 8px 8px 0 0;">
+                        <h3 style="color: #ffd166; font-size: 1.5rem; margin-bottom: 8px;">Hero Section</h3>
+                        <p style="color: #e8f4f8; font-size: 0.875rem;">Engaging headlines with CTAs</p>
+                    </div>
+                    <div style="padding: 12px; background: var(--color-bg-surface); border: 1px solid var(--color-border); border-top: none; border-radius: 0 0 8px 8px;">
+                        <div style="font-size: 0.75rem; color: var(--color-text-secondary); margin-bottom: 8px;">
+                            <strong>Includes:</strong> Headline, subtext, CTA button, background gradient
+                        </div>
+                        <button class="btn" style="width: 100%; padding: 8px; font-size: 0.875rem; background: var(--color-primary); color: white; border: none; border-radius: 6px; cursor: pointer;">Use Component</button>
+                    </div>
+                </div>
+
+                <div class="component-card" data-component="navbar">
+                    <div class="component-preview" style="background: #fff; padding: 16px 20px; border-radius: 8px 8px 0 0; border: 1px solid #e0e0e0; border-bottom: 2px solid var(--color-primary);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight: 700; color: #1a4d5c;">Brand</span>
+                            <div style="display: flex; gap: 16px; font-size: 0.875rem; color: #2a6575;">
+                                <span>Home</span>
+                                <span>About</span>
+                                <span>Contact</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="padding: 12px; background: var(--color-bg-surface); border: 1px solid var(--color-border); border-top: none; border-radius: 0 0 8px 8px;">
+                        <div style="font-size: 0.75rem; color: var(--color-text-secondary); margin-bottom: 8px;">
+                            <strong>Includes:</strong> Logo, navigation links, responsive menu
+                        </div>
+                        <button class="btn" style="width: 100%; padding: 8px; font-size: 0.875rem; background: var(--color-primary); color: white; border: none; border-radius: 6px; cursor: pointer;">Use Component</button>
+                    </div>
+                </div>
+
+                <div class="component-card" data-component="features">
+                    <div class="component-preview" style="background: #f8f9fa; padding: 24px 16px; border-radius: 8px 8px 0 0; border: 1px solid #e0e0e0;">
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                            <div style="background: white; padding: 16px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center;">
+                                <div style="font-size: 1.5rem; margin-bottom: 4px;">⚡</div>
+                                <div style="font-size: 0.75rem; color: #2a6575; font-weight: 600;">Fast</div>
+                            </div>
+                            <div style="background: white; padding: 16px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center;">
+                                <div style="font-size: 1.5rem; margin-bottom: 4px;">🎯</div>
+                                <div style="font-size: 0.75rem; color: #2a6575; font-weight: 600;">Precise</div>
+                            </div>
+                            <div style="background: white; padding: 16px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center;">
+                                <div style="font-size: 1.5rem; margin-bottom: 4px;">🚀</div>
+                                <div style="font-size: 0.75rem; color: #2a6575; font-weight: 600;">Scalable</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="padding: 12px; background: var(--color-bg-surface); border: 1px solid var(--color-border); border-top: none; border-radius: 0 0 8px 8px;">
+                        <div style="font-size: 0.75rem; color: var(--color-text-secondary); margin-bottom: 8px;">
+                            <strong>Includes:</strong> Icon grid, feature cards, responsive layout
+                        </div>
+                        <button class="btn" style="width: 100%; padding: 8px; font-size: 0.875rem; background: var(--color-primary); color: white; border: none; border-radius: 6px; cursor: pointer;">Use Component</button>
+                    </div>
+                </div>
+
+                <div class="component-card" data-component="cta">
+                    <div class="component-preview" style="background: linear-gradient(135deg, #ffd166 0%, #ffb627 100%); padding: 32px 20px; text-align: center; border-radius: 8px 8px 0 0;">
+                        <h4 style="color: #1a4d5c; font-size: 1.25rem; margin-bottom: 8px; font-weight: 700;">Ready to start?</h4>
+                        <p style="color: #2a6575; font-size: 0.75rem; margin-bottom: 12px;">Join thousands of users today</p>
+                        <div style="display: inline-block; background: #1a4d5c; color: white; padding: 8px 20px; border-radius: 6px; font-size: 0.875rem; font-weight: 600;">Get Started →</div>
+                    </div>
+                    <div style="padding: 12px; background: var(--color-bg-surface); border: 1px solid var(--color-border); border-top: none; border-radius: 0 0 8px 8px;">
+                        <div style="font-size: 0.75rem; color: var(--color-text-secondary); margin-bottom: 8px;">
+                            <strong>Includes:</strong> Headline, description, primary CTA
+                        </div>
+                        <button class="btn" style="width: 100%; padding: 8px; font-size: 0.875rem; background: var(--color-primary); color: white; border: none; border-radius: 6px; cursor: pointer;">Use Component</button>
+                    </div>
+                </div>
+
+                <div class="component-card" data-component="footer">
+                    <div class="component-preview" style="background: #1a4d5c; padding: 20px; border-radius: 8px 8px 0 0;">
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 12px;">
+                            <div>
+                                <div style="color: #ffd166; font-size: 0.65rem; font-weight: 700; margin-bottom: 4px;">PRODUCT</div>
+                                <div style="color: #e8f4f8; font-size: 0.625rem; line-height: 1.6;">Features<br>Pricing<br>Updates</div>
+                            </div>
+                            <div>
+                                <div style="color: #ffd166; font-size: 0.65rem; font-weight: 700; margin-bottom: 4px;">COMPANY</div>
+                                <div style="color: #e8f4f8; font-size: 0.625rem; line-height: 1.6;">About<br>Blog<br>Careers</div>
+                            </div>
+                            <div>
+                                <div style="color: #ffd166; font-size: 0.65rem; font-weight: 700; margin-bottom: 4px;">LEGAL</div>
+                                <div style="color: #e8f4f8; font-size: 0.625rem; line-height: 1.6;">Privacy<br>Terms<br>Security</div>
+                            </div>
+                        </div>
+                        <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px; color: #99c5d1; font-size: 0.625rem; text-align: center;">© 2026 Your Brand</div>
+                    </div>
+                    <div style="padding: 12px; background: var(--color-bg-surface); border: 1px solid var(--color-border); border-top: none; border-radius: 0 0 8px 8px;">
+                        <div style="font-size: 0.75rem; color: var(--color-text-secondary); margin-bottom: 8px;">
+                            <strong>Includes:</strong> Link columns, copyright, social icons
+                        </div>
+                        <button class="btn" style="width: 100%; padding: 8px; font-size: 0.875rem; background: var(--color-primary); color: white; border: none; border-radius: 6px; cursor: pointer;">Use Component</button>
+                    </div>
+                </div>
+
+                <div class="component-card" data-component="testimonial">
+                    <div class="component-preview" style="background: white; padding: 20px; border-radius: 8px 8px 0 0; border: 1px solid #e0e0e0;">
+                        <div style="color: #ffd166; font-size: 1.25rem; margin-bottom: 8px;">★★★★★</div>
+                        <p style="color: #2a6575; font-size: 0.75rem; font-style: italic; margin-bottom: 12px;">"This platform transformed how we build websites. Incredible!"</p>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #1a4d5c, #2a6575);"></div>
+                            <div>
+                                <div style="font-size: 0.75rem; font-weight: 600; color: #1a4d5c;">Jane Smith</div>
+                                <div style="font-size: 0.625rem; color: #99c5d1;">CEO, TechCorp</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="padding: 12px; background: var(--color-bg-surface); border: 1px solid var(--color-border); border-top: none; border-radius: 0 0 8px 8px;">
+                        <div style="font-size: 0.75rem; color: var(--color-text-secondary); margin-bottom: 8px;">
+                            <strong>Includes:</strong> Quote, rating, author info, avatar
+                        </div>
+                        <button class="btn" style="width: 100%; padding: 8px; font-size: 0.875rem; background: var(--color-primary); color: white; border: none; border-radius: 6px; cursor: pointer;">Use Component</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Typography & Style Guide -->
+            <div class="info-box" style="background: linear-gradient(135deg, rgba(26, 77, 92, 0.05), rgba(255, 209, 102, 0.05)); border-left: 4px solid var(--color-accent);">
+                <strong style="color: var(--color-primary); display: block; margin-bottom: 12px;">🎨 Design System</strong>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                    <div>
+                        <div style="font-size: 0.75rem; font-weight: 600; color: var(--color-text-primary); margin-bottom: 8px;">Colors</div>
+                        <div style="display: flex; gap: 8px;">
+                            <div style="width: 40px; height: 40px; background: #1a4d5c; border-radius: 6px; border: 2px solid var(--color-border);" title="Navy Primary"></div>
+                            <div style="width: 40px; height: 40px; background: #ffd166; border-radius: 6px; border: 2px solid var(--color-border);" title="Yellow Accent"></div>
+                            <div style="width: 40px; height: 40px; background: #e8f4f8; border-radius: 6px; border: 2px solid var(--color-border);" title="Light Blue"></div>
+                            <div style="width: 40px; height: 40px; background: #2a6575; border-radius: 6px; border: 2px solid var(--color-border);" title="Teal"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.75rem; font-weight: 600; color: var(--color-text-primary); margin-bottom: 8px;">Typography</div>
+                        <div style="font-size: 0.75rem; color: var(--color-text-secondary); line-height: 1.6;">
+                            <div style="font-size: 1.25rem; font-weight: 700; color: #1a4d5c; margin-bottom: 4px;">Heading</div>
+                            <div style="font-size: 0.875rem; color: #2a6575;">Body text uses system fonts for optimal performance and readability</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.75rem; font-weight: 600; color: var(--color-text-primary); margin-bottom: 8px;">Spacing</div>
+                        <div style="display: flex; align-items: center; gap: 8px; font-size: 0.75rem; color: var(--color-text-secondary);">
+                            <div style="width: 8px; height: 8px; background: var(--color-primary); border-radius: 2px;"></div> 8px
+                            <div style="width: 16px; height: 16px; background: var(--color-primary); border-radius: 2px;"></div> 16px
+                            <div style="width: 24px; height: 24px; background: var(--color-primary); border-radius: 2px;"></div> 24px
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form id="promptForm">
+            <!-- Section 1: Project Definition -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-number">1</div>
+                    <h2>Project Definition</h2>
+                </div>
+                <div class="collapsible-content">
+                    <div class="form-group">
+                        <label class="required">Project Type</label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" name="projectType" value="Landing Page" id="type1" required>
+                                <label for="type1">Landing Page</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" name="projectType" value="SaaS Site" id="type2">
+                                <label for="type2">SaaS Site</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" name="projectType" value="Portfolio" id="type3">
+                                <label for="type3">Portfolio</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" name="projectType" value="Component Library" id="type4">
+                                <label for="type4">Component Library</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" name="projectType" value="Marketing Site" id="type5">
+                                <label for="type5">Marketing Site</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="useCase" class="required">Use Case</label>
+                        <textarea id="useCase" placeholder="Describe in 1-2 sentences what this site does and who it's for" required></textarea>
+                        <p class="help-text">Example: "A platform that helps freelance designers showcase their work and attract high-value clients through curated case studies."</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="targetAudience" class="required">Target Audience</label>
+                        <input type="text" id="targetAudience" placeholder="Who visits this site? Be specific." required>
+                        <p class="help-text">Example: "Mid-career product designers, design hiring managers at tech startups"</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="primaryGoal" class="required">Primary Goal</label>
+                        <textarea id="primaryGoal" placeholder="What should a visitor DO or UNDERSTAND within 10 seconds?" required></textarea>
+                        <p class="help-text">Example: "Book a discovery call" or "Understand that we solve X problem for Y audience"</p>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="brandVoice" class="required">Brand Voice</label>
+                            <input type="text" id="brandVoice" placeholder="e.g., authoritative but approachable" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="visualStyle" class="required">Visual Style</label>
+                            <input type="text" id="visualStyle" placeholder="e.g., clean SaaS, editorial, brutalist" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="domain">Domain (if known)</label>
+                        <input type="url" id="domain" placeholder="https://yourdomain.com">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Scope Constraints -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-number">2</div>
+                    <h2>Scope Constraints</h2>
+                </div>
+                <div class="collapsible-content">
+                    <div class="info-box">
+                        <strong>Hard Limits:</strong> These constraints prevent scope creep, ensure portability, and meet Webflow Marketplace standards.
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="maxPages" class="required">Maximum Pages</label>
+                            <input type="number" id="maxPages" min="1" max="50" value="8" required>
+                            <p class="help-text">Recommended: 6-10 pages</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="maxComponents" class="required">Maximum Components/Sections</label>
+                            <input type="number" id="maxComponents" min="1" max="30" value="10" required>
+                            <p class="help-text">Recommended: 8-12 components</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">Is this for Webflow Marketplace submission?</label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" name="isMarketplace" value="yes" id="market1" required>
+                                <label for="market1">Yes - Full Marketplace Compliance</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" name="isMarketplace" value="no" id="market2" checked>
+                                <label for="market2">No - Personal/Client Project</label>
+                            </div>
+                        </div>
+                        <p class="help-text">Marketplace submissions undergo manual review and must meet strict quality standards</p>
+                    </div>
+
+                    <div id="marketplaceFields" style="display: none;">
+                        <div class="info-box" style="background: rgba(255, 209, 102, 0.1); border-left: 4px solid #ffd166;">
+                            <strong style="color: #1a4d5c;">📋 Marketplace Quality Standards</strong>
+                            <p style="margin-top: 8px; font-size: 0.875rem; color: var(--color-text-secondary);">Your library will be manually reviewed for design quality, functionality, clarity, and alignment with Webflow standards. "Satisfactory" submissions may require revision; libraries must reach "Good" quality within 2 feedback rounds.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="licenseType" class="required">License Type</label>
+                            <select id="licenseType" required>
+                                <option value="">Select license type...</option>
+                                <option value="FREE">FREE - No cost to users</option>
+                                <option value="COMMERCIAL">COMMERCIAL - Paid license</option>
+                                <option value="FREEMIUM">FREEMIUM - Free with paid upgrades</option>
+                            </select>
+                            <p class="help-text">Must clearly state usage rights and ensure you own/have rights to all assets</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="libraryPurpose" class="required">Library Purpose</label>
+                            <textarea id="libraryPurpose" placeholder="e.g., Modern SaaS UI kit with reusable components for product pages, dashboards, and marketing sections" required></textarea>
+                            <p class="help-text">Clearly define what problem your library solves - avoid bloated "do-everything" libraries</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="targetUseCase" class="required">Target Use Case</label>
+                            <textarea id="targetUseCase" placeholder="e.g., Webflow designers building SaaS websites who need production-ready components that work out-of-the-box" required></textarea>
+                            <p class="help-text">Who will use this library and for what specific purpose?</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Quality Assurance Checklist</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="qa1" class="qa-checkbox">
+                                    <label for="qa1">Design is professional, consistent, and intentional</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="qa2" class="qa-checkbox">
+                                    <label for="qa2">All components work without breaking or extra setup</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="qa3" class="qa-checkbox">
+                                    <label for="qa3">Clear naming structure with consistent prefixes (lib-, ui-, section-)</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="qa4" class="qa-checkbox">
+                                    <label for="qa4">Demo site matches library exactly and shows all components</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="qa5" class="qa-checkbox">
+                                    <label for="qa5">Responsive across desktop, tablet, mobile breakpoints</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="qa6" class="qa-checkbox">
+                                    <label for="qa6">No custom code dependencies that break portability</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="qa7" class="qa-checkbox">
+                                    <label for="qa7">No hard-coded content users must delete to reuse</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="qa8" class="qa-checkbox">
+                                    <label for="qa8">Components are independently reusable across projects</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="qa9" class="qa-checkbox">
+                                    <label for="qa9">All assets (icons, fonts, images) owned or properly licensed</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="qa10" class="qa-checkbox">
+                                    <label for="qa10">Tested cloning into fresh Webflow project with zero setup</label>
+                                </div>
+                            </div>
+                            <p class="help-text" style="margin-top: 12px; font-weight: 600;">All items must be checked before submission</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 10: Maturity Level -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-number">3</div>
+                    <h2>AEO Maturity Level</h2>
+                </div>
+                <div class="collapsible-content">
+                    <div class="info-box">
+                        <strong>Choose your AEO sophistication level:</strong> This calibrates how comprehensive the AI's output will be.
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">Your AEO Experience Level</label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" name="maturityLevel" value="1-2" id="level1" required>
+                                <label for="level1">Level 1-2: New to AEO</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" name="maturityLevel" value="2-3" id="level2">
+                                <label for="level2">Level 2-3: Some SEO foundation</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" name="maturityLevel" value="3-4" id="level3">
+                                <label for="level3">Level 3-4: Advanced</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="maturityGuidance" style="margin-top: 16px; padding: 16px; background: var(--color-bg-primary); border-radius: 8px; display: none;">
+                        <p id="maturityText" style="color: var(--color-text-secondary);"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Options -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-number">4</div>
+                    <h2>Additional Options</h2>
+                </div>
+                <div class="collapsible-content">
+                    <div class="form-group">
+                        <label for="brandName">Brand Name</label>
+                        <input type="text" id="brandName" placeholder="Your Brand">
+                        <p class="help-text">Used in llms.txt and schema markup</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contactEmail">Contact Email</label>
+                        <input type="email" id="contactEmail" placeholder="contact@yourdomain.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="socialProfiles">Social Media Profiles (one per line)</label>
+                        <textarea id="socialProfiles" placeholder="https://linkedin.com/company/yourcompany&#10;https://twitter.com/yourhandle&#10;https://facebook.com/yourpage"></textarea>
+                        <p class="help-text">Used for sameAs schema linking - critical for entity verification</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="industryTerms">Key Industry Terms/Entities</label>
+                        <textarea id="industryTerms" placeholder="e.g., SaaS, B2B software, cloud computing, CRM"></textarea>
+                        <p class="help-text">Consistent terminology your industry uses - helps AI understand your context</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="authorityReferences">Third-Party Authority References</label>
+                        <textarea id="authorityReferences" placeholder="e.g., Gartner, Forbes, TechCrunch, industry standards"></textarea>
+                        <p class="help-text">Publications or resources you'll reference to establish credibility</p>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Generate Master Prompt</button>
+        </form>
+
+        <!-- Output Section -->
+        <div class="output-section" id="outputSection">
+            <div class="success-message active">
+                ✓ Master prompt generated successfully! Copy and paste this into your AI website builder.
+            </div>
+
+            <div class="output-header">
+                <h2>Your Generated Master Prompt</h2>
+                <button type="button" class="btn btn-secondary" id="copyBtn" style="width: auto; margin: 0;">Copy to Clipboard</button>
+            </div>
+
+            <div class="output-content" id="outputContent"></div>
+
+            <button type="button" class="btn btn-secondary" id="resetBtn">Create Another Prompt</button>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('promptForm');
+        const outputSection = document.getElementById('outputSection');
+        const outputContent = document.getElementById('outputContent');
+        const copyBtn = document.getElementById('copyBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const maturityRadios = document.querySelectorAll('input[name="maturityLevel"]');
+        const maturityGuidance = document.getElementById('maturityGuidance');
+        const maturityText = document.getElementById('maturityText');
+        const marketplaceRadios = document.querySelectorAll('input[name="isMarketplace"]');
+        const marketplaceFields = document.getElementById('marketplaceFields');
+
+        // Maturity level guidance
+        const maturityInfo = {
+            '1-2': 'Focus: Getting the basics right. The AI will prioritize llms.txt, FAQPage schema, and question-driven content. Schema will be kept to Organization + FAQPage only.',
+            '2-3': 'Focus: Building a solid foundation. The AI will expand schema across all page types, ensure semantic structure is correct, and build content cluster architecture with internal linking.',
+            '3-4': 'Focus: Advanced implementation. The AI will include original research placeholders, programmatic content structure, systematic measurement infrastructure, and comprehensive schema coverage.'
+        };
+
+        maturityRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                maturityGuidance.style.display = 'block';
+                maturityText.textContent = maturityInfo[e.target.value];
+            });
+        });
+
+        // Show/hide marketplace fields
+        marketplaceRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                marketplaceFields.style.display = e.target.value === 'yes' ? 'block' : 'none';
+            });
+        });
+
+        // Form submission
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            generatePrompt();
+        });
+
+        function generatePrompt() {
+            const formData = {
+                projectType: document.querySelector('input[name="projectType"]:checked').value,
+                useCase: document.getElementById('useCase').value,
+                targetAudience: document.getElementById('targetAudience').value,
+                primaryGoal: document.getElementById('primaryGoal').value,
+                brandVoice: document.getElementById('brandVoice').value,
+                visualStyle: document.getElementById('visualStyle').value,
+                domain: document.getElementById('domain').value || '[yourdomain.com]',
+                maxPages: document.getElementById('maxPages').value,
+                maxComponents: document.getElementById('maxComponents').value,
+                isMarketplace: document.querySelector('input[name="isMarketplace"]:checked').value,
+                licenseType: document.getElementById('licenseType').value,
+                libraryPurpose: document.getElementById('libraryPurpose')?.value || '',
+                targetUseCase: document.getElementById('targetUseCase')?.value || '',
+                maturityLevel: document.querySelector('input[name="maturityLevel"]:checked').value,
+                brandName: document.getElementById('brandName').value || '[Brand Name]',
+                contactEmail: document.getElementById('contactEmail').value || '[contact@email.com]',
+                socialProfiles: document.getElementById('socialProfiles').value,
+                industryTerms: document.getElementById('industryTerms').value,
+                authorityReferences: document.getElementById('authorityReferences').value
+            };
+
+            const maturityInstructions = {
+                '1-2': '"Prioritize getting the llms.txt, FAQPage schema, and question-driven content structure right. Keep schema to Organization + FAQPage only. Focus on clarity over completeness."',
+                '2-3': '"Expand schema across all page types. Ensure semantic structure is airtight. Build the content cluster architecture with clear internal linking."',
+                '3-4': '"Include original research placeholders, programmatic content structure, and systematic measurement infrastructure. Schema should cover every page type. llms.txt should be comprehensive."'
+            };
+
+            const socialProfilesArray = formData.socialProfiles
+                ? formData.socialProfiles.split('\n').filter(url => url.trim()).map(url => `  "${url.trim()}"`).join(',\n')
+                : '  "[Add your social profiles]"';
+
+            let prompt = `# Master Prompt: AI Webflow Site & Library Builder
+AEO-Optimized + Marketplace-Ready
+
+## SECTION 1 — PROJECT DEFINITION
+
+Project Type: ${formData.projectType}
+Use Case: ${formData.useCase}
+Target Audience: ${formData.targetAudience}
+Primary Goal: ${formData.primaryGoal}
+Brand Voice: ${formData.brandVoice}
+Visual Style: ${formData.visualStyle}
+Domain: ${formData.domain}
+
+## SECTION 2 — OUTPUT SPECIFICATION
+
+The AI must produce the following deliverables. Do not skip any.
+
+**Deliverable 1: Webflow Designer Structure**
+Output all elements as Webflow-native classes, divs, sections, and CMS fields. Do NOT generate raw HTML/CSS. Structure every element the way it would appear in the Webflow Designer panel.
+
+**Deliverable 2: Component & Class Naming Map**
+A full list of every class, component, and CMS field with:
+- Its purpose
+- Its naming prefix (use lib-, ui-, or section- consistently)
+- Where it's used across the site
+
+**Deliverable 3: llms.txt File Content**
+Draft the complete llms.txt file tailored to this site's content structure and purpose.
+
+**Deliverable 4: Schema Markup (JSON-LD)**
+Generate all required schema for every page type in the site. Output as ready-to-paste <script type="application/ld+json"> blocks.
+
+**Deliverable 5: Demo Site Layout Plan**
+A page-by-page, section-by-section layout plan showing:
+- What content goes where
+- Real-world placeholder content (not lorem ipsum)
+- Responsive breakpoint notes (desktop → tablet → mobile)
+
+**Deliverable 6: FAQ Content + Schema**
+At least 8–12 genuine questions your target audience would ask, with structured answers and matching FAQPage schema.
+
+## SECTION 3 — SCOPE CONSTRAINTS
+
+These are hard limits. The AI must not exceed them.
+
+- Maximum pages: ${formData.maxPages}
+- Maximum components/sections in library: ${formData.maxComponents}
+- No custom code dependencies that break portability
+- No hard-coded content users must delete before reuse
+- No experimental or unstable Webflow features
+- All content must feel intentional — no filler sections
+
+${formData.isMarketplace === 'yes' ? `
+
+This library is being prepared for Webflow Marketplace submission. Manual review will evaluate:
+
+**Library Purpose & Scope:**
+${formData.libraryPurpose}
+
+**Target Use Case:**
+${formData.targetUseCase}
+
+**Quality Standards (Non-Negotiable):**
+
+1. **Design Quality**
+   - Visually polished with consistent design language
+   - Intentional spacing, typography, and color usage
+   - Accessible contrast ratios (WCAG AA minimum)
+   - Readable font sizes across all breakpoints
+   - Modern, clean, professional aesthetic
+   - Even "minimal" libraries must feel intentional, not unfinished
+
+2. **Functionality**
+   - Every component works as described without errors
+   - No broken layouts on clone
+   - Responsive across desktop (1920px), tablet (768px), mobile (375px)
+   - Forms function correctly (if included)
+   - CMS collections properly configured with clear documentation
+   - Interactions work smoothly without glitches
+
+3. **Clarity & Usability**
+   - Components are self-explanatory in Designer panel
+   - Class naming is readable and predictable (use lib-, ui-, or section- prefixes)
+   - No cryptic or auto-generated class names (e.g., avoid "div-block-47")
+   - Logical structure that matches user mental models
+   - Minimal overrides needed by end users
+   - Clear empty states for CMS-driven components
+
+4. **Reusability & Portability**
+   - Each component works independently without hidden dependencies
+   - Can be cloned into fresh Webflow project with ZERO additional setup
+   - No hard-coded content that users must manually delete
+   - Works across different project types and contexts
+   - Variables and utility classes used consistently
+   - No project-specific configurations required
+
+5. **Supported Elements Only**
+   Stick to native, reusable Webflow elements:
+   - Sections, Containers, Divs, Grid, Flexbox
+   - Headings (H1-H6), Text blocks, Rich Text
+   - Buttons, Links
+   - Images (with descriptive alt text)
+   - Forms (basic, reusable patterns)
+   - CMS collections (clearly documented)
+   - Native Webflow interactions (not custom code)
+   - Utility classes and style variables
+
+6. **Unsupported Elements (AVOID)**
+   - Custom code dependencies (JavaScript, CSS) that break on clone
+   - Embedded scripts or external API calls
+   - Experimental or beta Webflow features
+   - Third-party integrations without clear documentation
+   - Overly complex interactions without explanation
+   - Hard-coded data users must replace manually
+
+**Demo Site Requirements:**
+
+The demo site is your showroom. It must:
+- Display EVERY layout and component clearly
+- Use real-world example content (not lorem ipsum everywhere)
+- Demonstrate responsive behavior at key breakpoints
+- Match the library exactly (what you see = what you clone)
+- Show components in realistic usage contexts
+- Include visual hierarchy and proper content flow
+- Be publicly accessible for review
+
+Think of it as a product catalog, not a design playground.
+
+**Naming Conventions (Clarity > Cleverness):**
+
+- Use consistent prefixes throughout:
+  - lib-* for library-specific components
+  - ui-* for interface elements
+  - section-* for page sections
+  - util-* for utility classes
+- Examples:
+  - ✅ lib-hero-centered
+  - ✅ ui-button-primary
+  - ✅ section-testimonials-grid
+  - ❌ hero-1-copy-final-v2
+  - ❌ div-block-47
+  - ❌ container-wrapper-thing
+
+**Licensing & Legal:**
+
+- License type: ${formData.licenseType}
+- You must own or have proper rights to ALL assets:
+  - Icons (use licensed or open-source icon sets)
+  - Fonts (ensure web font licenses allow redistribution)
+  - Images (use owned/licensed stock photos or placeholders)
+  - No copyrighted materials without explicit permission
+- State usage rights clearly in library description
+- Comply with Webflow Creator Agreement
+
+**Pre-Submission Checklist:**
+
+Before the AI generates the final output, verify:
+
+□ Library has focused purpose (not bloated "do-everything")
+□ Solves clear, repeatable problem for Webflow users
+□ Design is professional and consistent across all components
+□ All components function correctly without setup
+□ Naming is readable with consistent prefixes
+□ Demo site matches library exactly
+□ Responsive across desktop, tablet, mobile
+□ No custom code dependencies
+□ No hard-coded content to delete
+□ All assets owned or properly licensed
+□ Tested by cloning into fresh Webflow project
+□ Documentation or README included
+□ Empty states handled logically for CMS components
+□ Accessibility considerations met (contrast, alt text, labels)
+□ Follows Webflow best practices and standards
+
+**Review Process:**
+
+- Submissions are manually reviewed by Webflow Marketplace team
+- "Satisfactory" submissions may receive feedback for improvement
+- Libraries must reach "Good" quality within 2 feedback rounds
+- If quality standards not met after 2 rounds, library may be rejected
+- Be prepared to iterate based on reviewer feedback
+- Average review time: 1-2 weeks (may vary)
+
+**Important Note:**
+Meeting these standards is NON-NEGOTIABLE for Marketplace approval. Do not compromise on quality, functionality, or clarity. A focused, well-executed library with 6 components is better than a bloated library with 20 mediocre ones.
+` : '- Components should be reusable but Marketplace standards do not apply'}
+
+## SECTION 4 — AEO CONTENT STRATEGY (Pillar 1: Content)
+
+The AI must structure ALL content on this site to be AI-answer-engine friendly. This is not optional.
+
+**Rule 1: Answer First**
+Every page must place its clearest, most direct answer in the first 2–3 sentences. Structure content in an inverted pyramid.
+
+**Rule 2: Question-Driven Structure**
+Headings must mirror real questions users ask. Not keyword phrases — actual questions.
+Example: ✅ "How does [product] help with [problem]?" ❌ "Product Features"
+
+**Rule 3: Quotable Statements**
+Include at least one clearly defined, standalone statement per key page that an AI could extract and cite directly.
+
+**Rule 4: Content Clusters**
+Group pages into topical clusters. Each cluster has:
+- One cornerstone page (broad topic, comprehensive)
+- 2–4 supporting pages (specific subtopics)
+- Internal links connecting them bidirectionally
+
+**Rule 5: Freshness Signals**
+Include visible date stamps, "last updated" fields, and version indicators where appropriate.
+
+**Rule 6: No JavaScript-Only Content**
+All answer-first content must be present in the initial HTML when the page loads. AI crawlers will not see JavaScript-rendered content.
+
+**Rule 7: Entity & Co-occurrence Clarity**
+- Use consistent industry terminology: ${formData.industryTerms || '[Define your industry terms]'}
+- Reference authoritative third-party sources: ${formData.authorityReferences || '[List relevant publications/standards]'}
+- This signals that your brand operates within a recognized context
+
+## SECTION 5 — TECHNICAL FOUNDATIONS (Pillar 2: Technical)
+
+### 5A: Semantic Structure Requirements
+- Single H1 per page — must be a clear, descriptive statement or question
+- H2s must represent distinct topic sections
+- H3s used for sub-sections only
+- No skipped heading levels
+- All images must have descriptive alt text
+- Buttons and links must have clear, action-oriented labels
+- No empty divs or placeholder containers in final output
+
+### 5B: llms.txt Structure Template
+
+Generate content following the official llms.txt spec:
+
+\`\`\`
+# ${formData.brandName}
+
+> [A 2–3 sentence blockquote summary explaining what the brand does, who it serves, and why it matters — written as a clear, self-contained description an AI can use directly.]
+
+## Key Pages
+- [Homepage](${formData.domain}): [One-sentence description]
+- [About Us](${formData.domain}/about): [One-sentence description]
+- [Products / Services](${formData.domain}/products): [One-sentence description]
+
+## FAQ
+- [FAQ Page](${formData.domain}/faq): [Brief note on questions answered]
+
+## Blog / Insights
+- [Blog Index](${formData.domain}/blog): [Content topics covered]
+
+## Contact
+- Email: ${formData.contactEmail}
+- Support: ${formData.domain}/contact
+
+## Attribution
+Please attribute any content sourced from this site to ${formData.brandName} and link back to the original page URL.
+\`\`\`
+
+Also generate **llms-full.txt** if site is under 10 pages.
+
+### 5C: Schema Markup Requirements
+
+Generate schema for EVERY page type. Priority:
+
+| Page Type | Schema Required |
+|-----------|----------------|
+| Homepage / About | Organization + WebSite |
+| Team / Author Pages | Person (one per author) |
+| FAQ Page | FAQPage |
+| Blog / Article Pages | Article or BlogPosting |
+| Product Pages | Product |
+| How-To / Tutorial | HowTo |
+| Reviews / Testimonials | Review |
+
+**Critical: sameAs Linking**
+Every Organization and Person schema MUST include:
+
+\`\`\`json
+"sameAs": [
+${socialProfilesArray}
+]
+\`\`\`
+
+**Nesting Rule:**
+- Article/BlogPosting → nest Person in author field
+- Person → nest Organization in worksFor field
+- This chain traces credibility from content to verified brand
+
+All schema must use valid JSON-LD syntax.
+
+### 5D: Webflow Technical Checklist
+- Clean sitemap structure (logical URL hierarchy)
+- IndexNow compatibility (for Bing/ChatGPT indexing)
+- Mobile-first responsiveness across all breakpoints
+- Image compression and performance considerations
+- No broken internal links
+
+## SECTION 6 — AUTHORITY SIGNALS (Pillar 3: Authority)
+
+Build these into site structure:
+
+- A dedicated "About" or "Our Story" page with specific, verifiable claims
+- A visible "As Seen In" or "Trusted By" section placeholder
+- A blog/insights section structured as content clusters
+- A reviews/testimonials section with schema markup ready
+- Clear author attribution on content pages
+
+Avoid:
+- Vague trust signals
+- Generic stock imagery for team/about sections
+- Marketing copy instead of genuine expertise
+
+## SECTION 7 — MEASUREMENT INFRASTRUCTURE (Pillar 4: Measurement)
+
+Build into site:
+
+- UTM-friendly URL structure
+- Distinct landing pages for AI-referred traffic
+- A visible "How AI finds us" page documenting what AI engines should know
+
+Recommend monthly tracking checklist:
+- Search [brand name] + [core topic] in ChatGPT, Claude, Perplexity, Google AI Overview
+- Check if brand appears and description is accurate
+- Track referral traffic from AI platforms
+- Log results — look for trends over 30-90 days
+
+${formData.isMarketplace === 'yes' ? `
+## SECTION 8 — WEBFLOW MARKETPLACE STANDARDS
+
+Every component must meet these standards:
+
+**Design Quality**
+- Consistent visual system across all components
+- Intentional spacing, typography, and color usage
+- Accessible contrast ratios and readable font sizes
+- Modern, clean, professional feel
+
+**Reusability**
+- Components work independently — no hidden dependencies
+- Minimal overrides needed by end user
+- Logical empty states for CMS-driven components
+- Works when cloned into fresh Webflow project with zero setup
+
+**Naming & Structure**
+- All classes use consistent prefixes: lib-, ui-, or section-
+- No cryptic or auto-generated class names
+- Every component identifiable at a glance in Designer
+- Clear internal documentation
+
+**Licensing**
+- License type: ${formData.licenseType}
+- All assets (icons, fonts, images) owned or properly licensed
+- No copyrighted or restricted materials
+
+**Demo Site Requirements**
+- Every component shown in context with real-world content
+- Responsiveness demonstrated across desktop, tablet, mobile
+- Demo matches library exactly
+` : ''}
+
+## SECTION 9 — QUALITY GATE
+
+Before finalizing output, verify every item:
+
+□ Every page has clear H1 answering a question or stating purpose
+□ llms.txt drafted and matches actual site structure
+□ llms-full.txt drafted (if site under 10 pages)
+□ Schema markup generated for every page type
+□ Organization and Person schemas include sameAs arrays
+□ Article/BlogPosting schemas nest Person in author field
+□ Person schemas nest Organization in worksFor field
+□ WebSite schema on homepage
+□ BreadcrumbList schema on pages with breadcrumbs
+□ WebPage fallback schema on pages without specific type
+□ FAQ section with 8-12 questions + FAQPage schema
+□ Content uses inverted pyramid (answer first)
+□ No critical content loaded via JavaScript only
+□ Industry terminology used consistently; third-party sources referenced
+□ All class names use consistent prefixes
+□ No custom code dependencies or hard-coded content
+□ Demo layout uses real content, not lorem ipsum
+□ Responsive breakpoints noted for every section
+□ Internal linking between content clusters mapped
+□ No skipped heading levels
+□ Scope stays within ${formData.maxPages} pages and ${formData.maxComponents} components
+${formData.isMarketplace === 'yes' ? `
+□ Library has focused, clear purpose (not bloated)
+□ All 10 Marketplace quality checklist items verified
+□ Design is professional, consistent, intentional
+□ All components work without breaking or setup
+□ Class naming uses consistent prefixes (lib-, ui-, section-)
+□ Demo site matches library exactly
+□ Responsive across all breakpoints
+□ No custom code dependencies
+□ No hard-coded content to delete
+□ All assets owned or properly licensed
+□ Tested cloning into fresh Webflow project
+□ Components independently reusable
+□ Documentation/README included
+□ Empty states handled logically
+□ Meets accessibility standards (contrast, alt text)
+□ Ready for manual Webflow Marketplace review` : ''}
+
+## SECTION 10 — MATURITY LEVEL CALIBRATION
+
+Maturity Level: ${formData.maturityLevel}
+
+Add this instruction: ${maturityInstructions[formData.maturityLevel]}
+
+---
+
+**Built for:** ${formData.projectType}
+**Target Audience:** ${formData.targetAudience}
+**Primary Goal:** ${formData.primaryGoal}
+
+This prompt is complete and ready to use. Paste it into your AI website builder to generate a production-ready, AEO-optimized Webflow site structure.`;
+
+            outputContent.textContent = prompt;
+            outputSection.classList.add('active');
+            outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Copy to clipboard
+        copyBtn.addEventListener('click', () => {
+            const text = outputContent.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = '✓ Copied!';
+                copyBtn.style.background = 'var(--color-primary)';
+                copyBtn.style.color = 'white';
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                    copyBtn.style.background = '';
+                    copyBtn.style.color = '';
+                }, 2000);
+            });
+        });
+
+        // Reset form
+        resetBtn.addEventListener('click', () => {
+            form.reset();
+            outputSection.classList.remove('active');
+            maturityGuidance.style.display = 'none';
+            marketplaceFields.style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Initialize first radio button
+        document.getElementById('type1').checked = true;
+        document.getElementById('level1').checked = true;
+    </script>
+</body>
+</html>
+

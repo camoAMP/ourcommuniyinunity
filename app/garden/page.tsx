@@ -192,13 +192,14 @@ export default function GardenPage() {
             </div>
             <div className="relative">
               <div className="overflow-hidden rounded-2xl bg-primary-foreground/10">
-                <div className="mx-auto aspect-[9/16] w-full max-w-sm">
-                  <iframe
-                    className="h-full w-full"
-                    src={gardenVideo.embedUrl}
-                    title={gardenVideo.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
+                <div className="relative aspect-[4/3] w-full">
+                  <Image
+                    src="/images/garden/bonteheuwel-community-garden-2026-01-16-04.jpg"
+                    alt="Community garden in Bonteheuwel, Cape Town — January 16, 2026"
+                    fill
+                    className="object-cover"
+                    sizes="(min-width: 1024px) 50vw, 100vw"
+                    priority
                   />
                 </div>
               </div>

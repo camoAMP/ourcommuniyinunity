@@ -1,27 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { getSpotifyEpisodes, getSpotifyShowId } from "@/lib/spotify";
 import { ArrowRight, Headphones, Play } from "lucide-react";
 
-const featuredEpisodes = [
-  {
-    id: "5VA1UsrFB4aterGiQ8RhZM",
-    title: "When the Ground Moves",
-    description: "A raw exploration of resilience when life shifts beneath your feet.",
-  },
-  {
-    id: "episode-2",
-    title: "Behind Closed Doors",
-    description: "Unveiling the stories that happen when no one is watching.",
-  },
-  {
-    id: "episode-3",
-    title: "Under Pressure",
-    description: "How community members cope with the weight of daily challenges.",
-  },
-];
+export async function PodcastSection() {
+  const spotifyShowId = getSpotifyShowId();
+  const episodes = await getSpotifyEpisodes({ limit: 3 });
+  const showEpisodes = episodes.length > 0;
 
-export function PodcastSection() {
   return (
     <section className="bg-muted py-20">
       <div className="container mx-auto px-4">
@@ -61,25 +48,31 @@ export function PodcastSection() {
               <p className="text-sm font-semibold uppercase tracking-wider text-secondary">
                 Latest Episodes
               </p>
-              {featuredEpisodes.map((episode) => (
-                <Link
-                  key={episode.id}
-                  href={`/podcast#${episode.id}`}
-                  className="group flex items-center gap-4 rounded-lg border border-border bg-card p-3 transition-colors hover:bg-accent"
-                >
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform group-hover:scale-110">
-                    <Play className="h-4 w-4 fill-current" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-medium text-card-foreground">
-                      {episode.title}
-                    </p>
-                    <p className="truncate text-sm text-muted-foreground">
-                      {episode.description}
-                    </p>
-                  </div>
-                </Link>
-              ))}
+              {showEpisodes ? (
+                episodes.map((episode) => (
+                  <Link
+                    key={episode.slug}
+                    href={`/podcast#${episode.slug}`}
+                    className="group flex items-center gap-4 rounded-lg border border-border bg-card p-3 transition-colors hover:bg-accent"
+                  >
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform group-hover:scale-110">
+                      <Play className="h-4 w-4 fill-current" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-medium text-card-foreground">
+                        {episode.title}
+                      </p>
+                      <p className="truncate text-sm text-muted-foreground">
+                        {episode.description}
+                      </p>
+                    </div>
+                  </Link>
+                ))
+              ) : (
+                <p className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">
+                  Connect Spotify to show the latest episodes here.
+                </p>
+              )}
             </div>
 
             <Button asChild size="lg" className="bg-primary text-primary-foreground">
@@ -104,7 +97,7 @@ export function PodcastSection() {
               <div className="p-6">
                 <iframe
                   style={{ borderRadius: "12px" }}
-                  src="https://open.spotify.com/embed/show/7cwfPZpCqL3L1T0gLsjkx0?utm_source=generator&theme=0"
+                  src={`https://open.spotify.com/embed/show/${spotifyShowId}?utm_source=generator&theme=0`}
                   width="100%"
                   height="152"
                   frameBorder="0"

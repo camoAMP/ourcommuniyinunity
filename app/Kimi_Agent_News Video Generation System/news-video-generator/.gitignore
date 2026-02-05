@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Output directories
+output/videos/*.mp4
+output/temp/*
+output/logs/*.log
+!output/videos/.gitkeep
+!output/temp/.gitkeep
+!output/logs/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test files
+test_*.mp4
+test_*.mp3
+test_*.png
+*.test.js
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Build
+dist/
+build/

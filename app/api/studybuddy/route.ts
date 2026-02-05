@@ -6,6 +6,17 @@ type StudyBuddyRequest = {
   history?: Array<{ role: "user" | "assistant"; content: string }>;
 };
 
+type StudyBuddyResponse = {
+  output_text?: string;
+  output?: Array<{
+    type?: string;
+    content?: Array<{
+      type?: string;
+      text?: string;
+    }>;
+  }>;
+};
+
 const DEFAULT_MODEL = "gpt-4o-mini";
 
 function buildHistoryContext(
@@ -34,7 +45,7 @@ ${tone}
 Be concise, step-by-step, and ask one follow-up question at the end.`;
 }
 
-function extractOutputText(data: any) {
+function extractOutputText(data: StudyBuddyResponse) {
   if (typeof data?.output_text === "string" && data.output_text.trim()) {
     return data.output_text.trim();
   }
@@ -58,8 +69,13 @@ export async function POST(req: Request) {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     return Response.json(
-      { error: "Missing OPENAI_API_KEY." },
-      { status: 500 }
+      {
+        error: "StudyBuddy isn't configured yet.",
+        code: "missing_api_key",
+        help:
+          "Set OPENAI_API_KEY in .env.local for Next dev or in .dev.vars / Wrangler secrets for Cloudflare.",
+      },
+      { status: 503 }
     );
   }
 
@@ -99,8 +115,21 @@ export async function POST(req: Request) {
 
   if (!response.ok) {
     const errorText = await response.text();
+    let detail = errorText;
+    let errorCode: string | undefined;
+    try {
+      const parsed = JSON.parse(errorText);
+      if (parsed?.error?.message) {
+        detail = parsed.error.message;
+      }
+      if (typeof parsed?.error?.code === "string") {
+        errorCode = parsed.error.code;
+      }
+    } catch {
+      // keep raw text as detail
+    }
     return Response.json(
-      { error: "OpenAI request failed.", detail: errorText },
+      { error: "OpenAI request failed.", code: "openai_error", detail, errorCode },
       { status: response.status }
     );
   }
@@ -110,7 +139,7 @@ export async function POST(req: Request) {
 
   if (!outputText) {
     return Response.json(
-      { error: "No text output returned." },
+      { error: "No text output returned.", code: "empty_output" },
       { status: 502 }
     );
   }

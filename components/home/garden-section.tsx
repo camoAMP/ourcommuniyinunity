@@ -1,13 +1,40 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import { Flower2, Heart, ArrowRight, Utensils, School, Leaf } from "lucide-react";
 
 const GOAL_AMOUNT = 100000;
 const CURRENT_AMOUNT = 0;
 const progressPercent = (CURRENT_AMOUNT / GOAL_AMOUNT) * 100;
+
+const gardenSlides = [
+  {
+    src: "/images/garden/bonteheuwel-community-garden-2026-01-16-01.jpg",
+    alt: "Community garden in Bonteheuwel, Cape Town — January 16, 2026",
+  },
+  {
+    src: "/images/garden/bonteheuwel-community-garden-2026-01-16-02.jpg",
+    alt: "Community garden in Bonteheuwel, Cape Town — January 16, 2026",
+  },
+  {
+    src: "/images/garden/bonteheuwel-community-garden-2026-01-16-03.jpg",
+    alt: "Community garden in Bonteheuwel, Cape Town — January 16, 2026",
+  },
+  {
+    src: "/images/garden/bonteheuwel-community-garden-2026-01-16-04.jpg",
+    alt: "Community garden in Bonteheuwel, Cape Town — January 16, 2026",
+  },
+];
 
 export function GardenSection() {
   return (
@@ -90,16 +117,29 @@ export function GardenSection() {
                 <Progress value={progressPercent} className="h-3" />
               </div>
 
-              {/* Facebook Video Embed */}
-              <div className="mb-6 aspect-video overflow-hidden rounded-lg bg-muted">
-                <iframe
-                  src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fshare%2Fp%2F1EqQnEjcoi%2F&show_text=false&width=500"
-                  className="h-full w-full"
-                  style={{ border: "none", overflow: "hidden" }}
-                  allowFullScreen
-                  allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                  title="Garden Anti-Dumping Campaign"
-                />
+              {/* Garden Slideshow */}
+              <div className="mb-6">
+                <Carousel opts={{ loop: true }} className="w-full">
+                  <CarouselContent>
+                    {gardenSlides.map((slide) => (
+                      <CarouselItem key={slide.src}>
+                        <div className="overflow-hidden rounded-lg bg-muted">
+                          <div className="relative aspect-video w-full">
+                            <Image
+                              src={slide.src}
+                              alt={slide.alt}
+                              fill
+                              sizes="(min-width: 1024px) 40vw, 100vw"
+                              className="object-cover"
+                            />
+                          </div>
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="left-2" />
+                  <CarouselNext className="right-2" />
+                </Carousel>
               </div>
 
               <Button asChild className="w-full" size="lg">

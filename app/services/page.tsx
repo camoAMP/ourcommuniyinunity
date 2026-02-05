@@ -8,112 +8,160 @@ import {
   Users,
   HeartHandshake,
   Building2,
-  Scale,
   ArrowRight,
   CheckCircle2,
   Phone,
   Flower2,
+  Globe,
+  Share2,
+  Mail,
+  Palette,
+  Video,
+  Sparkles,
+  Box,
 } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Our Services",
   description:
-    "Explore the services offered by Our Community In Unity - education, job placement, SME support, community programs, social welfare, and legal aid.",
+    'We are not a school. We provide practical services, mentorship, and community support guided by "Each One Teach One."',
 };
 
 const services = [
   {
-    id: "education",
-    icon: GraduationCap,
-    title: "Education & Mentorship",
-    description:
-      "Comprehensive skills development programs designed to equip community members with the knowledge and skills they need to succeed.",
-    features: [
-      "After-school tutoring programs",
-      "Computer literacy training",
-      "Career guidance workshops",
-      "One-on-one mentorship matching",
-      "Scholarship assistance",
-      "Adult education programs",
-    ],
-  },
-  {
-    id: "jobs",
+    id: "small-business-services",
     icon: Briefcase,
-    title: "Job Placement Services",
+    title: "Small Business Digital Services",
     description:
-      "Connecting job seekers with meaningful employment opportunities while providing the support needed to succeed in the workplace.",
+      "Affordable solutions to help local entrepreneurs establish and grow their online presence.",
+    featureIcons: {
+      "Website Development - Simple, responsive websites and e-commerce landing pages using open-source templates":
+        Globe,
+      "3D Printing - Prototyping and custom prints for business needs": Box,
+      "Social Media Setup & Strategy - Profile optimization, content calendars, and engagement strategies":
+        Share2,
+      "Email Marketing Campaigns - Campaign design, list building, and automation setup": Mail,
+      "Graphic Design for Business - Posters, flyers, and promotional materials using accessible design tools":
+        Palette,
+      "Video Content Creation - Short promotional videos for social media and marketing": Video,
+      "Digital Branding Consultation - Logo design guidance, brand messaging, and online presence strategy":
+        Sparkles,
+    },
     features: [
-      "Job matching and referrals",
-      "CV writing assistance",
-      "Interview preparation",
-      "Workplace readiness training",
-      "Employer partnerships",
-      "Apprenticeship programs",
+      "Website Development - Simple, responsive websites and e-commerce landing pages using open-source templates",
+      "3D Printing - Prototyping and custom prints for business needs",
+      "Social Media Setup & Strategy - Profile optimization, content calendars, and engagement strategies",
+      "Email Marketing Campaigns - Campaign design, list building, and automation setup",
+      "Graphic Design for Business - Posters, flyers, and promotional materials using accessible design tools",
+      "Video Content Creation - Short promotional videos for social media and marketing",
+      "Digital Branding Consultation - Logo design guidance, brand messaging, and online presence strategy",
     ],
-    cta: { label: "Browse Jobs", href: "/jobs" },
   },
   {
-    id: "sme",
-    icon: Building2,
-    title: "SME Support",
+    id: "job-readiness",
+    icon: Briefcase,
+    title: "Job Readiness & Career Support",
     description:
-      "Empowering small and medium enterprises with resources, networking, and guidance to grow and create local employment.",
+      "Practical support to help job seekers succeed in today's digital-first job market.",
     features: [
-      "SEDFA funding guidance (R500k - R15m)",
-      "NYDA grant assistance (up to R250k)",
-      "Business registration via CIPC",
-      "Financial management training",
-      "Marketing and branding support",
-      "SME directory listing",
+      "CV writing and formatting",
+      "Interview preparation and practice",
+      "LinkedIn profile optimization",
+      "Online job search strategies",
+      "Professional communication skills",
+      "Portfolio and personal branding development",
     ],
-    cta: { label: "Funding & Resources", href: "/sme-portal#sedfa" },
   },
   {
-    id: "community",
+    id: "community-education",
     icon: Users,
-    title: "Community Programs",
+    title: "Community Education Programs",
     description:
-      "Building unity through sports, arts, and community events that bring people together and foster positive relationships.",
+      "Accessible learning opportunities for all ages and skill levels.",
+    heading: "We connect you with",
     features: [
-      "Youth sports leagues",
-      "Arts and culture programs",
-      "Community clean-up initiatives",
-      "Holiday events and celebrations",
-      "Youth leadership development",
-      "Intergenerational activities",
+      "After-school tutoring and homework support",
+      "Youth digital literacy programs",
+      "Adult education and skills development",
+      "Financial literacy basics (budgeting and saving)",
+      "One-on-one mentorship matching",
+      "Community workshops on in-demand skills",
     ],
   },
   {
-    id: "welfare",
+    id: "training-mentorship",
     icon: HeartHandshake,
-    title: "Social Welfare",
+    title: "Guide to FREE Training & Mentorship",
     description:
-      "Providing essential support services to vulnerable community members during difficult times.",
+      "Personalized support to help individuals and businesses implement what they learn.",
+    heading: "What we help you find",
     features: [
-      "Food parcels and soup kitchens",
-      "Clothing distribution",
-      "Emergency assistance",
-      "Counseling referrals",
-      "Home visits for elderly",
-      "Support groups",
+      "Monthly digital clinics for ongoing support",
+      "One-on-one mentorship sessions",
+      "Train-the-trainer programs for community leaders",
+      "Troubleshooting and technical support",
+      "Business planning and strategy sessions",
+      "Peer learning and networking opportunities",
     ],
   },
   {
-    id: "garden",
+    id: "youth-agriculture",
     icon: Flower2,
-    title: "Colleen Williams Memorial Garden",
+    title: "Youth Agriculture & Food Gardening",
     description:
-      "A community garden honouring Coline Williams (1967-1989), providing fresh produce and green space for Bonteheuwel.",
+      "Hands-on environmental education teaching kids sustainable food growing and healthy living.",
     features: [
-      "Fresh vegetable cultivation",
-      "Community food security",
-      "Youth gardening programmes",
-      "Environmental education",
-      "Anti-dumping initiatives",
-      "Memorial and reflection space",
+      "Practical gardening skills for children",
+      "Planting, tending, and harvesting vegetables",
+      "Understanding soil health and composting",
+      "Sustainable growing methods and water conservation",
+      "Connecting food growth to nutrition and healthy eating",
+      "Environmental stewardship and ecosystem awareness",
     ],
-    cta: { label: "Support the Garden", href: "/garden" },
+  },
+  {
+    id: "volunteer-program",
+    icon: Building2,
+    title: "Volunteer Program: SME Growth Support",
+    description:
+      "Gain real-world experience while helping local businesses thrive.",
+    heading: "Volunteer Opportunities Include",
+    details: [
+      {
+        title: "Eligibility",
+        items: [
+          "Open to individuals aged 16 and older",
+          "No prior professional experience required",
+          "Suitable for students, job seekers, career changers, and anyone looking to build skills",
+        ],
+      },
+      {
+        title: "Time Commitment",
+        items: [
+          "Completely flexible - you decide your availability",
+          "Work as much or as little as your schedule allows",
+          "Remote and in-person options available",
+        ],
+      },
+      {
+        title: "How It Works",
+        items: [
+          "Volunteers work directly with small businesses to support their growth",
+          "Businesses receive affordable professional assistance",
+          "Volunteers build portfolio experience and practical skills",
+          "Commission-based or experience-based compensation depending on the project",
+          "Hands-on mentorship and guidance from the OCIU team",
+        ],
+      },
+    ],
+    features: [
+      "Digital marketing support",
+      "Social media management",
+      "Website updates and maintenance",
+      "Graphic design projects",
+      "Content creation",
+      "Business strategy assistance",
+    ],
   },
 ];
 
@@ -123,12 +171,12 @@ export default function ServicesPage() {
       {/* Hero Section */}
       <section className="bg-primary py-20">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="mb-4 font-serif text-4xl font-bold text-primary-foreground md:text-5xl">
+          <h1 className="mb-0 font-serif text-4xl font-bold text-primary-foreground md:text-5xl">
             Our Services
           </h1>
           <p className="mx-auto max-w-2xl text-lg text-primary-foreground/80">
-            Comprehensive support services designed to empower individuals and strengthen
-            our community. Each one teach one.
+            We are not a school. We provide practical services, mentorship, and community
+            support guided by "Each One Teach One."
           </p>
         </div>
       </section>
@@ -137,7 +185,9 @@ export default function ServicesPage() {
       <section className="bg-background py-20">
         <div className="container mx-auto px-4">
           <div className="space-y-16">
-            {services.map((service, index) => (
+            {services.map((service, index) => {
+              const isSmallBusiness = service.id === "small-business-services";
+              return (
               <div
                 key={service.id}
                 id={service.id}
@@ -147,11 +197,19 @@ export default function ServicesPage() {
               >
                 <Card className="overflow-hidden border-border">
                   <div className="grid lg:grid-cols-2">
-                    <CardHeader className="flex flex-col justify-center bg-muted p-8 lg:p-12">
+                    <CardHeader
+                      className={`flex flex-col justify-center bg-muted p-8 lg:p-12 ${
+                        isSmallBusiness ? "items-center text-center" : ""
+                      }`}
+                    >
                       <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-primary">
                         <service.icon className="h-7 w-7 text-primary-foreground" />
                       </div>
-                      <CardTitle className="mb-4 font-serif text-2xl text-card-foreground md:text-3xl">
+                      <CardTitle
+                        className={`font-serif text-2xl text-card-foreground md:text-3xl ${
+                          isSmallBusiness ? "mb-0" : "mb-4"
+                        }`}
+                      >
                         {service.title}
                       </CardTitle>
                       <CardDescription className="text-base leading-relaxed">
@@ -166,23 +224,62 @@ export default function ServicesPage() {
                         </Button>
                       )}
                     </CardHeader>
-                    <CardContent className="p-8 lg:p-12">
+                    <CardContent
+                      className={`p-8 lg:p-12 ${isSmallBusiness ? "text-center" : ""}`}
+                    >
                       <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-secondary">
-                        What We Offer
+                        {service.heading ?? "What We Offer"}
                       </h4>
-                      <ul className="grid gap-3 sm:grid-cols-2">
-                        {service.features.map((feature) => (
-                          <li key={feature} className="flex items-start gap-2">
-                            <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-secondary" />
-                            <span className="text-sm text-card-foreground">{feature}</span>
-                          </li>
-                        ))}
+                      <ul
+                        className={`grid gap-3 sm:grid-cols-2 ${
+                          isSmallBusiness ? "justify-items-center" : ""
+                        }`}
+                      >
+                        {service.features.map((feature) => {
+                          const FeatureIcon = service.featureIcons?.[feature];
+                          return (
+                            <li
+                              key={feature}
+                              className={`flex items-start gap-3 rounded-lg border border-border bg-background/60 p-3 ${
+                                isSmallBusiness ? "flex-col items-center text-center" : ""
+                              }`}
+                            >
+                              {FeatureIcon ? (
+                                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+                                  <FeatureIcon className="h-4 w-4" />
+                                </div>
+                              ) : (
+                                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-secondary" />
+                              )}
+                              <span className="text-sm text-card-foreground">{feature}</span>
+                            </li>
+                          );
+                        })}
                       </ul>
+                      {service.details && (
+                        <div className="mt-6 space-y-5">
+                          {service.details.map((detail) => (
+                            <div key={detail.title}>
+                              <p className="text-sm font-semibold text-card-foreground">
+                                {detail.title}
+                              </p>
+                              <ul className="mt-2 space-y-2 text-sm text-muted-foreground">
+                                {detail.items.map((item) => (
+                                  <li key={item} className="flex items-start gap-2">
+                                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-secondary" />
+                                    <span>{item}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </CardContent>
                   </div>
                 </Card>
               </div>
-            ))}
+            )})}
           </div>
         </div>
       </section>
@@ -191,10 +288,12 @@ export default function ServicesPage() {
       <section className="bg-muted py-16">
         <div className="container mx-auto px-4 text-center">
           <h3 className="mb-4 font-serif text-2xl font-bold text-foreground">
-            Need Help Accessing Our Services?
+            Need Help Getting Started?
           </h3>
           <p className="mb-6 text-muted-foreground">
-            Our team is here to guide you to the right resources. Reach out today.
+            Our team is here to guide you. Whether you're looking to learn new skills,
+            start an online business, or find employment, we'll connect you with the
+            right resources.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Button asChild size="lg">

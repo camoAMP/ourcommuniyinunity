@@ -19,6 +19,7 @@ const navigation = [
   { name: "Podcast", href: "/podcast" },
   { name: "StudyBuddy", href: "/studybuddy" },
   { name: "SME Portal", href: "/sme-portal" },
+  { name: "AI Builder", href: "/webflow-ai-builder" },
   { name: "Jobs", href: "/jobs" },
 ];
 

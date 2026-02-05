@@ -24,7 +24,6 @@ import {
   FileText,
   Users,
   CheckCircle2,
-  DollarSign,
 } from "lucide-react";
 
 const jobListings = [
