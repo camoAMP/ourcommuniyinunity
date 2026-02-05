@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,6 +35,10 @@ const services = [
     title: "Small Business Digital Services",
     description:
       "Affordable solutions to help local entrepreneurs establish and grow their online presence.",
+    image: {
+      src: "/images/create an image for -_Small Business Digital Servi (1).png",
+      alt: "Small Business Digital Services",
+    },
     featureIcons: {
       "Website Development - Simple, responsive websites and e-commerce landing pages using open-source templates":
         Globe,
@@ -63,6 +68,10 @@ const services = [
     title: "Job Readiness & Career Support",
     description:
       "Practical support to help job seekers succeed in today's digital-first job market.",
+    image: {
+      src: "/images/Job Readiness  Career Support_Practical support to.png",
+      alt: "Job Readiness & Career Support",
+    },
     features: [
       "CV writing and formatting",
       "Interview preparation and practice",
@@ -78,6 +87,10 @@ const services = [
     title: "Community Education Programs",
     description:
       "Accessible learning opportunities for all ages and skill levels.",
+    image: {
+      src: "/images/communityedu.png",
+      alt: "Community Education Programs",
+    },
     heading: "We connect you with",
     features: [
       "After-school tutoring and homework support",
@@ -94,6 +107,10 @@ const services = [
     title: "Guide to FREE Training & Mentorship",
     description:
       "Personalized support to help individuals and businesses implement what they learn.",
+    image: {
+      src: "/images/Guide to FREE Training  Mentorship_Personalized su.png",
+      alt: "Guide to FREE Training & Mentorship",
+    },
     heading: "What we help you find",
     features: [
       "Monthly digital clinics for ongoing support",
@@ -110,6 +127,10 @@ const services = [
     title: "Youth Agriculture & Food Gardening",
     description:
       "Hands-on environmental education teaching kids sustainable food growing and healthy living.",
+    image: {
+      src: "/images/Youth Agriculture  Food Gardening_Hands-on environ.png",
+      alt: "Youth Agriculture & Food Gardening",
+    },
     features: [
       "Practical gardening skills for children",
       "Planting, tending, and harvesting vegetables",
@@ -125,6 +146,10 @@ const services = [
     title: "Volunteer Program: SME Growth Support",
     description:
       "Gain real-world experience while helping local businesses thrive.",
+    image: {
+      src: "/images/Volunteer Program SME Growth Support_Gain real-wor.png",
+      alt: "Volunteer Program: SME Growth Support",
+    },
     heading: "Volunteer Opportunities Include",
     details: [
       {
@@ -197,11 +222,7 @@ export default function ServicesPage() {
               >
                 <Card className="overflow-hidden border-border">
                   <div className="grid lg:grid-cols-2">
-                    <CardHeader
-                      className={`flex flex-col justify-center bg-muted p-8 lg:p-12 ${
-                        isSmallBusiness ? "items-center text-center" : ""
-                      }`}
-                    >
+                    <CardHeader className="flex flex-col items-center justify-center bg-muted p-8 text-center lg:p-12">
                       <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-primary">
                         <service.icon className="h-7 w-7 text-primary-foreground" />
                       </div>
@@ -212,6 +233,19 @@ export default function ServicesPage() {
                       >
                         {service.title}
                       </CardTitle>
+                      {service.image && (
+                        <div className="mb-6 w-full overflow-hidden rounded-2xl bg-background/60">
+                          <div className="relative aspect-[4/3] w-full">
+                            <Image
+                              src={service.image.src}
+                              alt={service.image.alt}
+                              fill
+                              sizes="(min-width: 1024px) 50vw, 100vw"
+                              className="object-contain object-top"
+                            />
+                          </div>
+                        </div>
+                      )}
                       <CardDescription className="text-base leading-relaxed">
                         {service.description}
                       </CardDescription>
@@ -224,9 +258,7 @@ export default function ServicesPage() {
                         </Button>
                       )}
                     </CardHeader>
-                    <CardContent
-                      className={`p-8 lg:p-12 ${isSmallBusiness ? "text-center" : ""}`}
-                    >
+                    <CardContent className="p-8 text-center lg:p-12">
                       <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-secondary">
                         {service.heading ?? "What We Offer"}
                       </h4>
