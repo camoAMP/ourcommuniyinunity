@@ -58,34 +58,34 @@ const resources = [
   },
 ];
 
-const featuredBusinesses = [
+const featuredBusinesses: Array<{
+  name: string;
+  category: string;
+  description: string;
+  location: string;
+  phone: string;
+}> = [];
+
+const builtWebsites = [
   {
-    name: "Mama's Kitchen",
-    category: "Food & Catering",
-    description: "Traditional Cape Malay cuisine and catering services.",
-    location: "Bonteheuwel",
-    phone: "+27 21 000 0001",
+    name: "Buddies Worldwide",
+    url: "https://buddiesworldwide.online/",
+    description: "Community-driven support and connection platform.",
   },
   {
-    name: "Tech Solutions CT",
-    category: "IT Services",
-    description: "Computer repairs, web design, and IT support for small businesses.",
-    location: "Athlone",
-    phone: "+27 21 000 0002",
+    name: "CPT Community Adults",
+    url: "https://cptcommunityadults.fun/",
+    description: "Learning, jobs, and community resources for adults.",
   },
   {
-    name: "Green Thumb Gardens",
-    category: "Landscaping",
-    description: "Professional landscaping and garden maintenance services.",
-    location: "Bishop Lavis",
-    phone: "+27 21 000 0003",
+    name: "Beloveful",
+    url: "https://beloveful.com/",
+    description: "Stories and initiatives that celebrate community care.",
   },
   {
-    name: "Stitch Perfect",
-    category: "Fashion & Tailoring",
-    description: "Custom clothing, alterations, and traditional attire.",
-    location: "Langa",
-    phone: "+27 21 000 0004",
+    name: "IRL Events",
+    url: "https://www.irlevents.fun/",
+    description: "Event listings and community gatherings.",
   },
 ];
 
@@ -466,69 +466,65 @@ export default function SMEPortalPage() {
         </div>
       </section>
 
-      {/* Business Directory */}
+      {/* Our Development Websites */}
       <section id="directory" className="bg-muted py-20">
         <div className="container mx-auto px-4">
           <div className="mb-12">
             <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-secondary">
-              Directory
+              Our Development Websites
             </p>
             <h2 className="mb-4 font-serif text-3xl font-bold text-foreground md:text-4xl">
-              Featured Local Businesses
+              Our Development Websites We Built
             </h2>
             <p className="mb-6 text-muted-foreground">
-              Support your community by connecting with local entrepreneurs.
+              Support your community by exploring the projects we have launched.
             </p>
+          </div>
 
-            {/* Search */}
-            <div className="flex max-w-md gap-2">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input type="search" placeholder="Search businesses..." className="pl-10" />
+          {builtWebsites.length > 0 ? (
+            <>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                {builtWebsites.map((site) => (
+                  <Card key={site.url} className="transition-all hover:shadow-lg">
+                    <CardHeader>
+                      <CardTitle className="font-serif text-lg text-card-foreground">
+                        {site.name}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div className="overflow-hidden rounded-lg border border-border bg-muted">
+                        <div className="relative aspect-video w-full">
+                          <iframe
+                            src={site.url}
+                            title={`${site.name} preview`}
+                            className="h-full w-full pointer-events-none"
+                            loading="lazy"
+                            scrolling="no"
+                            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                          />
+                        </div>
+                      </div>
+                      <CardDescription>{site.description}</CardDescription>
+                      <a
+                        href={site.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center text-sm font-medium text-primary hover:underline"
+                      >
+                        Visit Website
+                        <ExternalLink className="ml-1 h-4 w-4" />
+                      </a>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
-              <Button>Search</Button>
+
+            </>
+          ) : (
+            <div className="rounded-lg border border-border bg-card p-6 text-center text-muted-foreground">
+              No websites are listed yet. Check back soon.
             </div>
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {featuredBusinesses.map((business) => (
-              <Card key={business.name} className="transition-all hover:shadow-lg">
-                <CardHeader>
-                  <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-secondary">
-                    {business.category}
-                  </div>
-                  <CardTitle className="font-serif text-lg text-card-foreground">
-                    {business.name}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <CardDescription>{business.description}</CardDescription>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <MapPin className="h-4 w-4" />
-                      <span>{business.location}</span>
-                    </div>
-                    <a
-                      href={`tel:${business.phone}`}
-                      className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
-                    >
-                      <Phone className="h-4 w-4" />
-                      <span>{business.phone}</span>
-                    </a>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <div className="mt-8 text-center">
-            <Button asChild variant="outline" size="lg">
-              <Link href="/sme-portal/directory">
-                View Full Directory
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
-          </div>
+          )}
         </div>
       </section>
 
