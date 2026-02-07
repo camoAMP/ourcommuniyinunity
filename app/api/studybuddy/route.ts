@@ -2,6 +2,32 @@
 // and so OPENAI_API_KEY can be provided at runtime via Wrangler secrets.
 export const runtime = "nodejs";
 
+function getRuntimeEnvString(key: string): string | undefined {
+  const fromProcess = typeof process !== "undefined" ? process.env?.[key] : undefined;
+  if (typeof fromProcess === "string" && fromProcess.trim()) {
+    return fromProcess.trim();
+  }
+
+  // OpenNext (Cloudflare) stores the per-request env in an AsyncLocalStorage-backed context.
+  // This makes secrets accessible even if they aren't mirrored onto process.env for some reason.
+  try {
+    const g = globalThis as unknown as Record<PropertyKey, unknown>;
+    const cfContext = g[Symbol.for("__cloudflare-context__")];
+    const cfEnv =
+      typeof cfContext === "object" && cfContext !== null && "env" in cfContext
+        ? (cfContext as { env?: Record<string, unknown> }).env
+        : undefined;
+    const fromCf = cfEnv?.[key];
+    if (typeof fromCf === "string" && fromCf.trim()) {
+      return fromCf.trim();
+    }
+  } catch {
+    // ignore
+  }
+
+  return undefined;
+}
+
 type StudyBuddyRequest = {
   message: string;
   gradeLevel?: string;
@@ -68,7 +94,7 @@ function extractOutputText(data: StudyBuddyResponse) {
 }
 
 export async function POST(req: Request) {
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = getRuntimeEnvString("OPENAI_API_KEY");
   if (!apiKey) {
     return Response.json(
       {
@@ -93,7 +119,7 @@ export async function POST(req: Request) {
     return Response.json({ error: "Message is required." }, { status: 400 });
   }
 
-  const model = process.env.OPENAI_MODEL || DEFAULT_MODEL;
+  const model = getRuntimeEnvString("OPENAI_MODEL") || DEFAULT_MODEL;
   const historyContext = buildHistoryContext(payload.history);
   const input = historyContext
     ? `${historyContext}\nUser: ${message}`
