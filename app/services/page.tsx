@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  GraduationCap,
   Briefcase,
   Users,
   HeartHandshake,
@@ -201,7 +200,7 @@ export default function ServicesPage() {
           </h1>
           <p className="mx-auto max-w-2xl text-lg text-primary-foreground/80">
             We are not a school. We provide practical services, mentorship, and community
-            support guided by "Each One Teach One."
+            support guided by &quot;Each One Teach One.&quot;
           </p>
         </div>
       </section>
@@ -323,8 +322,8 @@ export default function ServicesPage() {
             Need Help Getting Started?
           </h3>
           <p className="mb-6 text-muted-foreground">
-            Our team is here to guide you. Whether you're looking to learn new skills,
-            start an online business, or find employment, we'll connect you with the
+            Our team is here to guide you. Whether you&apos;re looking to learn new skills,
+            start an online business, or find employment, we&apos;ll connect you with the
             right resources.
           </p>
           <div className="flex flex-wrap justify-center gap-4">

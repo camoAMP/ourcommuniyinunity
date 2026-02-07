@@ -46,6 +46,62 @@ type AIContextValue = {
 
 const AIContext = createContext<AIContextValue | null>(null);
 
+type ConversationRole = "user" | "assistant";
+
+type ConversationMessage = {
+  role: ConversationRole;
+  content: string;
+  name?: string;
+  isThinking?: boolean;
+  requiresAdReward?: boolean;
+  energyReward?: boolean;
+  offline?: boolean;
+  online?: boolean;
+  gradeLevel?: string;
+  error?: boolean;
+};
+
+type SpeechRecognitionResultLike = {
+  0: { transcript: string };
+  isFinal: boolean;
+};
+
+type SpeechRecognitionEventLike = {
+  results: ArrayLike<SpeechRecognitionResultLike>;
+};
+
+type SpeechRecognitionLike = {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onstart: (() => void) | null;
+  onend: (() => void) | null;
+  onresult: ((event: SpeechRecognitionEventLike) => void) | null;
+  onerror: ((event: unknown) => void) | null;
+  start: () => void;
+  stop: () => void;
+};
+
+type SpeechRecognitionConstructorLike = new () => SpeechRecognitionLike;
+
+type SpeechRecognitionWindow = Window &
+  typeof globalThis & {
+    SpeechRecognition?: SpeechRecognitionConstructorLike;
+    webkitSpeechRecognition?: SpeechRecognitionConstructorLike;
+  };
+
+type OfflineModelWorkerMessage =
+  | { status: "loading"; progress: number; message?: string }
+  | {
+      status: "loaded";
+      modelInfo: {
+        name: string;
+        size: string;
+        capabilities: string[];
+        gradeLevels: string[];
+      };
+    };
+
 const StudyBuddyApp = () => {
   const [activePage, setActivePage] = useState("talkback");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -60,11 +116,11 @@ const StudyBuddyApp = () => {
   const [showAdBanner, setShowAdBanner] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [aiResponse, setAiResponse] = useState<unknown>(null);
-  const [recognition, setRecognition] = useState<any>(null);
+  const [recognition, setRecognition] = useState<SpeechRecognitionLike | null>(null);
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [autoSpeak, setAutoSpeak] = useState(true);
-  const [conversation, setConversation] = useState<Array<any>>([]);
+  const [conversation, setConversation] = useState<ConversationMessage[]>([]);
   const [speechSupported, setSpeechSupported] = useState(false);
   const [speechOutputSupported, setSpeechOutputSupported] = useState(true);
   const [isSecureContext, setIsSecureContext] = useState(true);
@@ -123,8 +179,12 @@ const StudyBuddyApp = () => {
     setSpeechOutputSupported("speechSynthesis" in window);
 
     if (supportsSpeech) {
-      const SpeechRecognition =
-        (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      const w = window as SpeechRecognitionWindow;
+      const SpeechRecognition = w.SpeechRecognition || w.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        setSpeechSupported(false);
+        return undefined;
+      }
       const recognitionInstance = new SpeechRecognition();
       recognitionInstance.continuous = true;
       recognitionInstance.interimResults = true;
@@ -133,19 +193,20 @@ const StudyBuddyApp = () => {
       recognitionInstance.onstart = () => setIsListening(true);
       recognitionInstance.onend = () => setIsListening(false);
 
-      recognitionInstance.onresult = (event: any) => {
-        const currentTranscript = Array.from(event.results)
-          .map((result: any) => result[0].transcript)
+      recognitionInstance.onresult = (event: SpeechRecognitionEventLike) => {
+        const results = Array.from(event.results ?? []);
+        const currentTranscript = results
+          .map((result) => result[0]?.transcript ?? "")
           .join("");
         setTranscript(currentTranscript);
 
-        if (event.results[0].isFinal) {
+        if (results[0]?.isFinal) {
           handleUserMessage(currentTranscript);
           setTranscript("");
         }
       };
 
-      recognitionInstance.onerror = (error: any) => {
+      recognitionInstance.onerror = (error: unknown) => {
         console.error("Speech recognition error:", error);
         setIsListening(false);
       };
@@ -249,8 +310,8 @@ const StudyBuddyApp = () => {
           )
         );
 
-        modelWorkerRef.current.onmessage = (e: MessageEvent) => {
-          const data = e.data as any;
+        modelWorkerRef.current.onmessage = (e: MessageEvent<OfflineModelWorkerMessage>) => {
+          const data = e.data;
           if (data.status === "loading") {
             setModelProgress(data.progress);
           } else if (data.status === "loaded") {
@@ -417,7 +478,7 @@ const StudyBuddyApp = () => {
     setIsProcessing(false);
   };
 
-  const buildHistoryPayload = (items: Array<any>) =>
+  const buildHistoryPayload = (items: ConversationMessage[]) =>
     items
       .filter(
         (item) =>
@@ -458,12 +519,44 @@ const StudyBuddyApp = () => {
       });
       if (timeout) clearTimeout(timeout);
 
-      const data = await response.json().catch(() => ({}));
+      const data: unknown = await response.json().catch(() => ({}));
+      const json =
+        typeof data === "object" && data !== null ? (data as Record<string, unknown>) : {};
       if (!response.ok) {
-        throw new Error(data?.error || "StudyBuddy request failed.");
+        const code = typeof json.code === "string" ? json.code : "";
+        const detail = typeof json.detail === "string" ? json.detail : "";
+        const baseError = typeof json.error === "string" ? json.error : "";
+
+        const messageText =
+          code === "missing_api_key"
+            ? "StudyBuddy online AI isn't configured yet (missing OPENAI_API_KEY). Add it in `.env.local` for dev or as a Wrangler secret for Cloudflare, then reload."
+            : detail
+            ? `Online AI error (${response.status}): ${detail}`
+            : baseError
+            ? `Online AI error (${response.status}): ${baseError}`
+            : `Online AI error (${response.status}). Please try again.`;
+
+        setConversation((prev) => {
+          const withoutThinking = prev.filter((msg) => !msg.isThinking);
+          return [
+            ...withoutThinking,
+            {
+              role: "assistant",
+              content: messageText,
+              name: "StudyBuddy",
+              error: true,
+            },
+          ];
+        });
+
+        // If online AI isn't configured, keep the app usable by falling back to offline mode.
+        if (code === "missing_api_key") {
+          setActiveModel("offline");
+        }
+        return;
       }
 
-      const text = typeof data?.text === "string" ? data.text.trim() : "";
+      const text = typeof json.text === "string" ? json.text.trim() : "";
       if (!text) {
         throw new Error("No response text returned.");
       }
@@ -485,12 +578,16 @@ const StudyBuddyApp = () => {
       if (autoSpeak) {
         speakText(text);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("StudyBuddy API error:", error);
       setConversation((prev) => {
         const withoutThinking = prev.filter((msg) => !msg.isThinking);
+        const errorName =
+          typeof error === "object" && error !== null && "name" in error
+            ? String((error as Record<string, unknown>).name)
+            : "";
         const errorMessage =
-          error?.name === "AbortError"
+          errorName === "AbortError"
             ? "The AI request took too long. Please try again."
             : "I'm having trouble reaching the AI service right now. Please try again in a moment.";
         return [
@@ -856,7 +953,7 @@ const StudyBuddyApp = () => {
                         Start Your Learning Journey
                       </h2>
                       <p className="mx-auto mb-6 max-w-md text-muted-foreground">
-                        Click "Live Tutor" in the sidebar to start learning with your
+                        Click &quot;Live Tutor&quot; in the sidebar to start learning with your
                         AI tutor. Choose your grade level and ask anything about math,
                         science, or biology!
                       </p>
@@ -1003,7 +1100,7 @@ const StudyBuddyApp = () => {
                           Start Learning with StudyBuddy AI
                         </p>
                         <p className="max-w-md text-center text-muted-foreground">
-                          Ask anything about math, science, or biology! I'll explain
+                          Ask anything about math, science, or biology! I&apos;ll explain
                           concepts at your grade level with visuals and real-life
                           examples.
                         </p>
@@ -1135,12 +1232,7 @@ const StudyBuddyApp = () => {
                                   </div>
                                 )}
 
-                                {message.error && (
-                                  <div className="mt-2 rounded-lg border border-border bg-muted p-2 text-xs text-foreground">
-                                    <AlertTriangle className="mr-1 inline h-3 w-3" />
-                                    Error processing your request. Please try again.
-                                  </div>
-                                )}
+                                {/* Error messages are rendered in the chat content itself. */}
                               </div>
                             )}
                           </div>
@@ -1214,10 +1306,9 @@ const StudyBuddyApp = () => {
 
                   <div className="mt-4 rounded-lg border border-border bg-muted p-3 text-center">
                     <p className="text-sm text-foreground">
-                      <span className="font-medium">Learning Tip:</span> Type
-                      "visualize [topic]" for diagrams, "real-life example" for
-                      practical applications, or "break down" for step-by-step
-                      explanations!
+                      <span className="font-medium">Learning Tip:</span>{" "}
+                      Type &quot;visualize [topic]&quot; for diagrams, &quot;real-life example&quot; for
+                      practical applications, or &quot;break down&quot; for step-by-step explanations!
                     </p>
                   </div>
                 </div>

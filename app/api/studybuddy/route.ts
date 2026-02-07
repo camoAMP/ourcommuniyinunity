@@ -1,4 +1,6 @@
-export const runtime = "edge";
+// Use the Node.js runtime so environment variables work reliably on Cloudflare (OpenNext + nodejs_compat),
+// and so OPENAI_API_KEY can be provided at runtime via Wrangler secrets.
+export const runtime = "nodejs";
 
 type StudyBuddyRequest = {
   message: string;

@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, DragEvent, FormEvent, useMemo, useRef, useState } from "react";
+import { ChangeEvent, DragEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertTriangle,
   ChevronDown,
@@ -22,12 +22,14 @@ import {
   MoreHorizontal,
   Plus,
   RefreshCcw,
+  SlidersHorizontal,
   Smartphone,
   Sparkles,
   Tablet,
   Trash2,
   UserPlus,
   Wand2,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -1272,9 +1274,29 @@ export function WebflowAiBuilderPage() {
     const sessionEmail = getInitialSessionEmail();
     return sessionEmail || null;
   });
+  const [mobilePromptOpen, setMobilePromptOpen] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [authInfo, setAuthInfo] = useState<string | null>(null);
   const outputRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    // Make the preview match the device on first load (esp. helpful on mobile).
+    const isMobile = window.matchMedia?.("(max-width: 640px)")?.matches ?? false;
+    const isTablet = window.matchMedia?.("(max-width: 1024px)")?.matches ?? false;
+    const preferredMode: ViewportMode = isMobile ? "mobile" : isTablet ? "tablet" : "desktop";
+    const id = window.setTimeout(() => setViewportMode(preferredMode), 0);
+    return () => window.clearTimeout(id);
+  }, []);
+
+  useEffect(() => {
+    if (!mobilePromptOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [mobilePromptOpen]);
 
   const readStoredAccounts = (): AccountRecord[] => {
     try {
@@ -1881,7 +1903,7 @@ export function WebflowAiBuilderPage() {
 
   return (
     <div className="pb-16">
-      <section className="relative overflow-hidden bg-primary py-16 md:py-20">
+      <section className="relative hidden overflow-hidden bg-primary py-16 md:block md:py-20">
         <div className="absolute inset-0 opacity-15">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-secondary via-transparent to-transparent" />
         </div>
@@ -1904,8 +1926,9 @@ export function WebflowAiBuilderPage() {
 
       <div className="w-full py-0">
         <div className="w-full">
-          <Card className="min-h-[calc(100vh-96px)] overflow-hidden rounded-none border-x-0 border-border bg-card text-card-foreground shadow-xl">
-              <div className="border-b border-border bg-primary/95 px-3 py-2 text-primary-foreground">
+          <Card className="h-[calc(100dvh-64px)] overflow-hidden rounded-none border-x-0 border-border bg-card text-card-foreground shadow-xl xl:h-auto xl:min-h-[calc(100vh-96px)]">
+            <div className="flex h-full flex-col">
+              <div className="shrink-0 border-b border-border bg-primary/95 px-3 py-2 text-primary-foreground">
                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
                   <div className="flex min-w-0 flex-wrap items-center gap-1.5">
                     <Badge className="h-6 rounded bg-secondary px-2 text-secondary-foreground">W</Badge>
@@ -1951,42 +1974,8 @@ export function WebflowAiBuilderPage() {
                 </div>
               </div>
 
-              <div className="border-b border-border bg-muted/60 p-2 xl:hidden">
-                <div className="grid grid-cols-3 overflow-hidden rounded-md border border-border">
-                  <button
-                    type="button"
-                    onClick={() => setStudioPanel("library")}
-                    className={cn(
-                      "px-2 py-1.5 text-xs",
-                      studioPanel === "library" ? "bg-primary text-primary-foreground" : "text-muted-foreground",
-                    )}
-                  >
-                    Library
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setStudioPanel("canvas")}
-                    className={cn(
-                      "border-x border-border px-2 py-1.5 text-xs",
-                      studioPanel === "canvas" ? "bg-primary text-primary-foreground" : "text-muted-foreground",
-                    )}
-                  >
-                    Canvas
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setStudioPanel("inspector")}
-                    className={cn(
-                      "px-2 py-1.5 text-xs",
-                      studioPanel === "inspector" ? "bg-primary text-primary-foreground" : "text-muted-foreground",
-                    )}
-                  >
-                    Inspector
-                  </button>
-                </div>
-              </div>
-
-              <div className="grid xl:min-h-[790px] xl:grid-cols-[52px_228px_minmax(0,1fr)_286px]">
+              <div className="flex-1 overflow-hidden">
+                <div className="grid h-full overflow-y-auto xl:min-h-[790px] xl:grid-cols-[52px_228px_minmax(0,1fr)_286px]">
                 <aside className="hidden border-r border-border bg-sidebar p-2 text-sidebar-foreground xl:flex xl:flex-col xl:items-center xl:justify-between">
                   <div className="space-y-2">
                     {[Home, Library, Globe, Sparkles, Wand2].map((Icon, index) => (
@@ -3118,11 +3107,125 @@ export function WebflowAiBuilderPage() {
                     )}
                   </div>
                 </aside>
+                </div>
               </div>
+
+              <div className="shrink-0 border-t border-border bg-card/95 px-2 py-2 backdrop-blur supports-[backdrop-filter]:bg-card/70 xl:hidden">
+                <div className="grid grid-cols-4 divide-x divide-border overflow-hidden rounded-2xl border border-border bg-muted/30">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobilePromptOpen(false);
+                      setStudioPanel("library");
+                    }}
+                    aria-current={studioPanel === "library" ? "page" : undefined}
+                    className={cn(
+                      "flex flex-col items-center justify-center gap-1 px-2 py-2 text-xs font-medium transition-colors",
+                      studioPanel === "library"
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    <Library className="size-4" />
+                    Library
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStudioPanel("canvas");
+                      setMobilePromptOpen((open) => !open);
+                    }}
+                    aria-current={mobilePromptOpen ? "page" : undefined}
+                    aria-expanded={mobilePromptOpen}
+                    className={cn(
+                      "flex flex-col items-center justify-center gap-1 px-2 py-2 text-xs font-medium transition-colors",
+                      mobilePromptOpen
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    <Wand2 className="size-4" />
+                    Prompt
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobilePromptOpen(false);
+                      setStudioPanel("canvas");
+                    }}
+                    aria-current={studioPanel === "canvas" ? "page" : undefined}
+                    className={cn(
+                      "flex flex-col items-center justify-center gap-1 px-2 py-2 text-xs font-medium transition-colors",
+                      studioPanel === "canvas"
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    <Globe className="size-4" />
+                    Canvas
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobilePromptOpen(false);
+                      setStudioPanel("inspector");
+                    }}
+                    aria-current={studioPanel === "inspector" ? "page" : undefined}
+                    className={cn(
+                      "flex flex-col items-center justify-center gap-1 px-2 py-2 text-xs font-medium transition-colors",
+                      studioPanel === "inspector"
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    <SlidersHorizontal className="size-4" />
+                    Inspector
+                  </button>
+                </div>
+              </div>
+            </div>
           </Card>
         </div>
 
-        <div className="container mx-auto px-4 pt-8">
+        {mobilePromptOpen && (
+          <button
+            type="button"
+            onClick={() => setMobilePromptOpen(false)}
+            className="fixed inset-0 z-40 bg-black/55 backdrop-blur-sm xl:hidden"
+            aria-label="Close prompt builder"
+          />
+        )}
+
+        <div
+          className={cn(
+            "fixed inset-x-0 bottom-0 z-50 max-h-[85dvh] overflow-y-auto rounded-t-3xl border-t border-border bg-card/95 px-4 pb-10 pt-3 shadow-2xl backdrop-blur transition-transform duration-300 ease-out",
+            mobilePromptOpen ? "translate-y-0" : "translate-y-full",
+            "xl:static xl:z-auto xl:max-h-none xl:overflow-visible xl:translate-y-0 xl:transform-none xl:rounded-none xl:border-0 xl:bg-transparent xl:px-4 xl:pb-0 xl:pt-8 xl:shadow-none xl:backdrop-blur-0",
+            "xl:container xl:mx-auto",
+          )}
+        >
+          <div className="sticky top-0 z-10 -mx-4 mb-4 border-b border-border bg-card/95 px-4 pb-3 pt-2 backdrop-blur xl:hidden">
+            <div className="mx-auto mb-2 h-1.5 w-12 rounded-full bg-muted-foreground/25" />
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold">Prompt Builder</p>
+                <p className="truncate text-xs text-muted-foreground">
+                  Generate the master prompt and copy it into your AI builder.
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="size-9 rounded-full border border-border bg-background/40"
+                onClick={() => setMobilePromptOpen(false)}
+                aria-label="Close prompt builder"
+              >
+                <X className="size-4" />
+              </Button>
+            </div>
+          </div>
+
           <div className="grid gap-8 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
             <div className="space-y-6">
               <form className="space-y-6" onSubmit={handleSubmit}>
