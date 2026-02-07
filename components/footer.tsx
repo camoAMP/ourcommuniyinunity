@@ -1,6 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Facebook, Instagram, Mail, MapPin, Phone } from "lucide-react";
+import { Facebook, Instagram, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+
+const CONTACT_PHONE_DISPLAY = "081 569 3926";
+const CONTACT_PHONE_E164 = "+27815693926";
+const WHATSAPP_NUMBER = "27815693926";
+const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`;
 
 const footerLinks = {
   organization: [
@@ -132,11 +137,22 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="tel:+27000000000"
+                  href={`tel:${CONTACT_PHONE_E164}`}
                   className="flex items-center gap-2 text-sm text-sidebar-foreground/70 transition-colors hover:text-sidebar-foreground"
                 >
                   <Phone className="h-4 w-4" />
-                  <span>+27 00 000 0000</span>
+                  <span>{CONTACT_PHONE_DISPLAY}</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href={WHATSAPP_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-sm text-sidebar-foreground/70 transition-colors hover:text-sidebar-foreground"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  <span>WhatsApp</span>
                 </a>
               </li>
             </ul>

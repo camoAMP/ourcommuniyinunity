@@ -21,11 +21,18 @@ import {
   Home,
   Leaf,
   Menu,
+  MessageCircle,
   Mic,
+  Phone,
   Sparkles,
   Wrench,
   X,
 } from "lucide-react";
+
+const CONTACT_PHONE_DISPLAY = "081 569 3926";
+const CONTACT_PHONE_E164 = "+27815693926";
+const WHATSAPP_NUMBER = "27815693926";
+const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`;
 
 const navigation = [
   { name: "Home", href: "/", icon: Home },
@@ -173,6 +180,33 @@ export function Header() {
               </nav>
 
               <div className="relative border-t border-sidebar-border/80 p-4">
+                <div className="mb-3 grid grid-cols-2 gap-2">
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="border-sidebar-border/70 bg-sidebar-accent/20 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                  >
+                    <a href={`tel:${CONTACT_PHONE_E164}`} onClick={() => setIsOpen(false)}>
+                      <Phone className="h-4 w-4" />
+                      Call
+                    </a>
+                  </Button>
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="border-sidebar-border/70 bg-sidebar-accent/20 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                  >
+                    <a
+                      href={WHATSAPP_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <MessageCircle className="h-4 w-4" />
+                      WhatsApp
+                    </a>
+                  </Button>
+                </div>
                 <Button
                   asChild
                   className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
@@ -184,6 +218,9 @@ export function Header() {
                 </Button>
                 <p className="mt-3 text-center text-[11px] text-sidebar-foreground/70">
                   Join the mission. Support community learning.
+                </p>
+                <p className="mt-1 text-center text-[11px] text-sidebar-foreground/60">
+                  {CONTACT_PHONE_DISPLAY}
                 </p>
               </div>
             </div>
